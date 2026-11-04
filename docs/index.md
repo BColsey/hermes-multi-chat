@@ -13,6 +13,7 @@ Multi Chat adds independent terminal conversations to the **Hermes Web Dashboard
 - **[Update, disable, remove and roll back](installation.md#update-disable-or-remove)** — preserve settings and conversation history.
 - **[Compatibility and limits](compatibility.md)** — supported build, verified coverage and important caveats.
 - **[Changelog](changelog.md)** — what the experimental preview includes.
+- **[Security scanning and SBOMs](security.md)** — automated checks, reports and release inventories.
 - **[Integration contracts](contracts.md)** — SDK, terminal transport, read-only adapter and ownership design.
 
 ## Develop and contribute

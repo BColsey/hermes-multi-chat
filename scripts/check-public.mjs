@@ -18,6 +18,7 @@ const roots = new Set([
   "package-lock.json",
   "install.py",
   "requirements-dev.txt",
+  "requirements-security.txt",
   "ruff.toml",
   "tsconfig.json",
   "vitest.config.ts",

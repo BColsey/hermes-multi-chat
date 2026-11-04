@@ -30,7 +30,7 @@ ruff check install.py dashboard scripts tests
 npm run check:public
 npm run package
 (cd artifacts && sha256sum --check SHA256SUMS)
-npm audit --omit=dev --audit-level=high
+npm audit --audit-level=high
 ```
 
 The fast Python suite skips two **real Hermes config-writer** cases unless `HERMES_SOURCE` and `HERMES_PYTHON` are set. GitHub-hosted CI runs the fast checks; it does not claim model-backed or real-dashboard browser coverage. Do not run untrusted pull requests on a machine with private Hermes state/credentials.
@@ -126,7 +126,8 @@ Read [integration contracts](contracts.md) before changing transport, resume beh
 3. Build twice and compare archive SHA-256. Inspect the tar member list: only `multi-chat/dashboard/` payload, never state/credentials.
 4. Check documentation links and preview screenshots; run `npm run check:public` on the actual staged publication tree. Review secrets manually too; a text scanner is not a complete audit.
 5. Tag the reviewed source, create an **experimental prerelease**, and upload only the archive, its `.sha256`, `install.py`, `install.py.sha256` and `SHA256SUMS` from `artifacts/`. Do not upload the whole artifacts directory.
-6. Download the published files, verify checksums and preview the documented install. Publication is not a production installation/restart.
+6. Confirm the [Release SBOM workflow](security.md#release-automation) attached the validated runtime inventory and its checksum (or manually backfill an older tag). Do not replace existing assets.
+7. Download the published files, verify checksums and preview the documented install. Publication is not a production installation/restart.
 
 ## Contributing
 

@@ -3,6 +3,7 @@
 **Your projects, side by side. One dashboard.**
 
 [![Checks](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml)
+[![Security](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml)
 [Download v0.1.1 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.1.1) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
 
 Multi Chat adds a **two-pane or four-pane workspace** to the existing **Hermes Web Dashboard**. Each pane runs the real Hermes TUI in its own conversation and project. The normal Chat page stays exactly where it is.
@@ -80,7 +81,7 @@ npm run typecheck && npm run lint && npm test
 npm run package
 ```
 
-See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.1.1.json) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
+See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.1.1.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
 
 ### Licensing
 
