@@ -1,5 +1,11 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, lstatSync, readFileSync } from "node:fs";
+import {
+  constants,
+  openSync,
+  fstatSync,
+  closeSync,
+  readFileSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 
 // Inspect precisely what Git can publish, not ignored private test state.
@@ -58,8 +64,12 @@ if (process.env.PUBLICATION_FORBIDDEN_FILE) {
 }
 const errors = [];
 const textFiles = new Map();
+const publishedFiles = new Set();
+if (typeof constants.O_NOFOLLOW !== "number")
+  throw new Error(
+    "Publication checks require no-follow file opens on this platform.",
+  );
 for (const file of files) {
-  if (!existsSync(file)) continue;
   if (
     privatePath.test(file) ||
     !(
@@ -71,12 +81,31 @@ for (const file of files) {
     errors.push(`${file}: unexpected publication path`);
     continue;
   }
-  if (!lstatSync(file).isFile()) {
-    errors.push(`${file}: not a regular file`);
+  let fd;
+  let value;
+  try {
+    // Pin the inspected file; a swapped symlink must never redirect the read.
+    fd = openSync(
+      file,
+      constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+    );
+    if (!fstatSync(fd).isFile()) {
+      errors.push(`${file}: not a readable regular file`);
+      continue;
+    }
+    if (/\.(?:png|webp|jpg)$/.test(file)) {
+      publishedFiles.add(resolve(file)); // Images still require a human privacy review.
+      continue;
+    }
+    value = readFileSync(fd, "utf8");
+  } catch (error) {
+    if (error.code !== "ENOENT")
+      errors.push(`${file}: not a readable regular file`);
     continue;
+  } finally {
+    if (fd !== undefined) closeSync(fd);
   }
-  if (/\.(?:png|webp|jpg)$/.test(file)) continue; // Images require a human privacy review.
-  const value = readFileSync(file, "utf8");
+  publishedFiles.add(resolve(file));
   textFiles.set(resolve(file), value);
   for (const [pattern, label] of patterns)
     if (pattern.test(value)) errors.push(`${file}: ${label}`);
@@ -98,13 +127,13 @@ for (const [file, value] of textFiles) {
       ? resolve(dirname(file), decodeURIComponent(path))
       : file;
     const line = value.slice(0, match.index).split("\n").length;
-    if (!existsSync(target))
+    if (!publishedFiles.has(target))
       errors.push(
         `${file.slice(process.cwd().length + 1)}:${line}: broken local documentation link`,
       );
     else if (anchor && target.endsWith(".md")) {
       const headings = [
-        ...readFileSync(target, "utf8").matchAll(/^#{1,6}\s+(.+)$/gm),
+        ...textFiles.get(target).matchAll(/^#{1,6}\s+(.+)$/gm),
       ].map((m) => slug(m[1]));
       if (!headings.includes(anchor))
         errors.push(
