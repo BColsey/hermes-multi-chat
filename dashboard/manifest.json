@@ -1,0 +1,14 @@
+{
+  "name": "multi-chat",
+  "label": "Multi Chat",
+  "description": "Independent project conversations using the real Hermes TUI.",
+  "icon": "MessageSquare",
+  "version": "0.1.0",
+  "tab": {
+    "path": "/multi-chat",
+    "position": "after:chat"
+  },
+  "entry": "dist/index.js",
+  "css": "dist/style.css",
+  "api": "plugin_api.py"
+}

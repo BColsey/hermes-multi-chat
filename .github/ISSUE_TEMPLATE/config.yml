@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Installation and troubleshooting
+    url: https://github.com/BColsey/hermes-multi-chat/blob/main/docs/troubleshooting.md
+    about: Start here for setup and attachment problems.
+  - name: Report a security vulnerability privately
+    url: https://github.com/BColsey/hermes-multi-chat/security/advisories/new
+    about: Never post credentials or exploitable details in a public issue.

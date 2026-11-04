@@ -1,0 +1,47 @@
+{
+  "name": "hermes-dashboard-multi-chat",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent real-TUI conversations in the Hermes Web Dashboard.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BColsey/hermes-multi-chat.git"
+  },
+  "homepage": "https://github.com/BColsey/hermes-multi-chat#readme",
+  "bugs": {
+    "url": "https://github.com/BColsey/hermes-multi-chat/issues"
+  },
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests scripts/*.mjs && prettier --check src tests scripts/*.mjs dashboard/manifest.json package.json tsconfig.json playwright.config.ts",
+    "format": "prettier --write src tests scripts/*.mjs dashboard/manifest.json package.json tsconfig.json playwright.config.ts",
+    "test": "vitest run",
+    "test:browser": "playwright test",
+    "package": "npm run build && node scripts/package.mjs",
+    "test:python": "python3 -m unittest discover -s tests -p 'test_*.py' -v",
+    "check:public": "node scripts/check-public.mjs"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/addon-unicode11": "0.9.0",
+    "@xterm/xterm": "6.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "22.19.1",
+    "@types/react": "19.2.7",
+    "esbuild": "0.25.12",
+    "eslint": "9.39.1",
+    "fake-indexeddb": "6.2.4",
+    "prettier": "3.7.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.46.1",
+    "vitest": "3.2.4"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "plugin": {
+    "name": "multi-chat",
+    "version": "0.1.0",
+    "status": "experimental preview"
+  },
+  "hermes": {
+    "version": "0.22.6",
+    "commit": "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab",
+    "profile": "default",
+    "isolation": "in_process",
+    "sdk": "1.1.0"
+  },
+  "checks": {
+    "typecheck": "passed",
+    "frontend_lint_format": "passed",
+    "python_lint_format": "passed",
+    "typescript_unit": {
+      "passed": 28
+    },
+    "python_unit": {
+      "passed": 13
+    },
+    "real_hermes_config_writer_integration": {
+      "passed": 2,
+      "scope": "temporary synthetic profiles only"
+    },
+    "real_hermes_browser": {
+      "passed": 13,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "transport": "authenticated plain LAN HTTP, Web Locks unavailable case included",
+      "tests": [
+        {
+          "title": "native TUI resume into an already-viewed conversation blocks the second input path",
+          "passed": true
+        },
+        {
+          "title": "loss of the actual disposable PTY never becomes refresh permission to spawn another",
+          "passed": true
+        },
+        {
+          "title": "resume keeps workspace/title; native /new confirmation, identity and refresh stay correct",
+          "passed": true
+        },
+        {
+          "title": "model changes are session-scoped and do not write the profile default",
+          "passed": true
+        },
+        {
+          "title": "password gate, PTY ticket requirement and single-use SDK tickets remain enforced",
+          "passed": true
+        },
+        {
+          "title": "disabling and removing the plugin restore navigation; Normal Chat and history remain",
+          "passed": true
+        },
+        {
+          "title": "two/four independent terminals, workspaces, slash input, resizing, maximize and close-view",
+          "passed": true
+        },
+        {
+          "title": "refresh and transient reconnect preserve identity and do not replay user input",
+          "passed": true
+        },
+        {
+          "title": "duplicated tab with cloned sessionStorage and no Web Locks cannot take over",
+          "passed": true
+        },
+        {
+          "title": "existing session conflict focuses the original pane instead of a second writer",
+          "passed": true
+        },
+        {
+          "title": "narrow viewport remains keyboard-usable without horizontal overflow",
+          "passed": true
+        },
+        {
+          "title": "early input cannot lose its slash prefix and become a partial prompt",
+          "passed": true
+        },
+        {
+          "title": "late real workspace discovery does not write into an editing pane",
+          "passed": true
+        }
+      ]
+    },
+    "build": "passed",
+    "archive_checksums": "passed",
+    "two_build_reproducibility": "passed",
+    "runtime_dependency_audit": {
+      "vulnerabilities": 0
+    },
+    "javascript_syntax": "passed"
+  },
+  "toolchain": {
+    "node": "v22.23.2",
+    "python": "3.14 (Hermes integration); installer requires 3.11+",
+    "playwright": "1.58.2",
+    "chromium": "145.0.7632.6",
+    "ruff": "0.15.22"
+  },
+  "artifact": {
+    "filename": "multi-chat-0.1.0.tar.gz",
+    "sha256": "3944cd24d42cee8493ceafc180d9800e36ff3f17d80a63a8f3a3920fb992321f",
+    "installer_sha256": "5b45becb3b84049e05f5c12dbf1a81d28e717bad5d066e4e2282ee2be1be390c"
+  },
+  "not_verified": [
+    "actual model inference/streaming and model-driven tools/approval/clarification",
+    "long-running model work and 30-minute retention soak",
+    "Firefox/Safari",
+    "real mobile IME/OS clipboard permissions",
+    "production deployment",
+    "atomic attach-only behavior (unsupported core capability)"
+  ],
+  "privacy": {
+    "contents": "aggregate verification only; no auth, transcript, host or private path data",
+    "screenshots": "disposable public-demo paths and native help; account/session identifiers masked"
+  },
+  "production_installation_performed": false,
+  "core_changes_by_plugin": false
+}
