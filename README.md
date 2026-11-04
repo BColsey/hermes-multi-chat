@@ -3,7 +3,7 @@
 **Your projects, side by side. One dashboard.**
 
 [![Checks](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml)
-[Download v0.1.0 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.1.0) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
+[Download v0.1.1 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.1.1) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
 
 Multi Chat adds a **two-pane or four-pane workspace** to the existing **Hermes Web Dashboard**. Each pane runs the real Hermes TUI in its own conversation and project. The normal Chat page stays exactly where it is.
 
@@ -28,7 +28,7 @@ Run these commands **on the machine that runs Hermes**, as the same OS user. Pyt
 
 ```bash
 curl --fail --location --output install.py \
-  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.1.0/install.py
+  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.1.1/install.py
 
 python3 install.py install          # verify compatibility + checksum; preview only
 python3 install.py install --apply  # install and enable after you review the plan
@@ -80,11 +80,11 @@ npm run typecheck && npm run lint && npm test
 npm run package
 ```
 
-See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.1.0.json) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
+See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.1.1.json) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
 
 ### Licensing
 
-A project-wide reuse license has not yet been selected. Public visibility is not an open-source license grant. Bundled dependencies retain their own licenses.
+[MIT](LICENSE) © 2026 BColsey. Bundled dependencies retain their own licenses.
 
 ---
 

@@ -2,6 +2,12 @@
 
 [Docs](index.md) / Changelog
 
+## 0.1.1 — MIT licensing
+
+- License project code under MIT; preserve third-party notices.
+- Include the full project notice in the prebuilt plugin archive and standalone installer.
+- Update release links and package metadata. Terminal behavior is unchanged; the v0.1.0 tag/assets are preserved.
+
 ## 0.1.0 — experimental preview
 
 - Add `/multi-chat` with two/four independent real Hermes TUI panes, project/session selection, resizable layouts, maximize/restore and narrow-screen stacking.

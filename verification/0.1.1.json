@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "plugin": {
+    "name": "multi-chat",
+    "version": "0.1.1",
+    "status": "experimental preview",
+    "license": "MIT"
+  },
+  "change_scope": "License notices, release metadata and documentation only. No terminal behavior changes.",
+  "checks": {
+    "typecheck": "passed",
+    "frontend_lint_format": "passed",
+    "python_lint_format": "passed",
+    "typescript_unit": {
+      "passed": 28
+    },
+    "python_unit": {
+      "passed": 13
+    },
+    "real_hermes_config_writer_integration": {
+      "passed": 2,
+      "scope": "temporary synthetic profiles only"
+    },
+    "two_build_reproducibility": "passed",
+    "archive_checksums": "passed",
+    "project_license_matches_archive": "passed",
+    "standalone_installer_contains_full_license": "passed",
+    "all_previous_archive_payload_bytes_unchanged_except_manifest_version": "passed",
+    "installer_ast_unchanged_except_docstring_and_release_version": "passed"
+  },
+  "browser_regression_evidence": {
+    "receipt": "0.1.0.json",
+    "passed": 13,
+    "rerun_for_this_release": false,
+    "reason": "Same byte-for-byte runtime/backend payload; license/version-only packaging update."
+  },
+  "artifact": {
+    "filename": "multi-chat-0.1.1.tar.gz",
+    "sha256": "ebc61e47ca4a1202ddcb499027b23d69e48da291c71142077b5e9283236dd888",
+    "installer_sha256": "488baa594a6925ff1940f034afee4914e422a37324bc2a0970e49eb09ae087a4",
+    "license_sha256": "7fd00bd8aada21a3008520ad06826030834a18426a0dbfd92148164694ac941c"
+  },
+  "production_installation_performed": false,
+  "core_changes_by_plugin": false
+}

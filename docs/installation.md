@@ -19,7 +19,7 @@ The usual target is `~/.hermes/plugins/multi-chat/dashboard/`. An explicit `HERM
 
 ```bash
 curl --fail --location --output install.py \
-  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.1.0/install.py
+  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.1.1/install.py
 ```
 
 This saves a file; it does not pipe remote code into a shell. Inspect it before running it if your policy requires that. The installer is Python standard library only and uses Hermes's **already installed** runtime to read/write its configuration.
@@ -32,7 +32,7 @@ python3 install.py install
 python3 install.py install --apply
 ```
 
-`install` downloads the **pinned v0.1.0** archive and its checksum over HTTPS, verifies SHA-256 and validates archive paths/files before installation. It does not chase an unpinned “latest” release. The preview checks compatibility and the destination but changes no profile files or settings.
+`install` downloads the **pinned v0.1.1** archive and its checksum over HTTPS, verifies SHA-256 and validates archive paths/files before installation. It does not chase an unpinned “latest” release. The preview checks compatibility and the destination but changes no profile files or settings.
 
 Applying installs the bundled IIFE/CSS and read-only API, then enables only `multi-chat`. Other plugins, authentication, model defaults, tool permissions, session history and service limits remain unchanged. No service is started/restarted. There is no pip/npm installation into Hermes.
 
@@ -64,11 +64,11 @@ python3 install.py doctor --hermes-source "$HOME/src/hermes-agent"
 For offline installation, transfer `install.py`, the archive and matching `.sha256` file from the **same release** to the server. With the files together:
 
 ```bash
-python3 install.py install --bundle multi-chat-0.1.0.tar.gz
-python3 install.py install --bundle multi-chat-0.1.0.tar.gz --apply
+python3 install.py install --bundle multi-chat-0.1.1.tar.gz
+python3 install.py install --bundle multi-chat-0.1.1.tar.gz --apply
 ```
 
-The checksum file must be named `multi-chat-0.1.0.tar.gz.sha256`. Offline mode does not download anything. A source build produces the same files under `artifacts/`; see [development](development.md).
+The checksum file must be named `multi-chat-0.1.1.tar.gz.sha256`. Offline mode does not download anything. A source build produces the same files under `artifacts/`; see [development](development.md).
 
 ## Update, disable or remove
 

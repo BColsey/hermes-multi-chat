@@ -104,7 +104,7 @@ Stop the disposable dashboard with Ctrl+C when finished. Inspect its child proce
 
 Disable traces/HAR/full-page log capture containing auth or sessions. Use only disposable public-demo directories and native non-sensitive TUI output for screenshots. Redact account usage/status, private paths and session metadata. Do not publish `.dev/`, login storage, error-context files, raw Playwright reports or full environment/config dumps.
 
-The committed [verification summary](../verification/0.1.0.json) is deliberately an aggregate, not a transcript or machine inventory. It separates a prior real-dashboard verification from the smaller GitHub CI suite.
+The committed [verification summary](../verification/0.1.1.json) is deliberately an aggregate, not a transcript or machine inventory. It separates a prior real-dashboard verification from the smaller GitHub CI suite.
 
 ## Source map
 
@@ -122,7 +122,7 @@ Read [integration contracts](contracts.md) before changing transport, resume beh
 ## Release checklist
 
 1. Keep `package.json`, `dashboard/manifest.json` and `install.py` versions in sync; update the pinned download links and changelog.
-2. Run local checks and the real config-writer/browser integration against the supported Hermes commit. Record scope and failures honestly. Do not substitute mocks for real runtime evidence.
+2. Run local checks and the real config-writer/browser integration against the supported Hermes commit. For notice/version-only releases, byte-compare the runtime/backend against the previously verified archive and explicitly record any browser-suite reuse instead. Record scope and failures honestly; do not substitute mocks for real runtime evidence.
 3. Build twice and compare archive SHA-256. Inspect the tar member list: only `multi-chat/dashboard/` payload, never state/credentials.
 4. Check documentation links and preview screenshots; run `npm run check:public` on the actual staged publication tree. Review secrets manually too; a text scanner is not a complete audit.
 5. Tag the reviewed source, create an **experimental prerelease**, and upload only the archive, its `.sha256`, `install.py`, `install.py.sha256` and `SHA256SUMS` from `artifacts/`. Do not upload the whole artifacts directory.
@@ -132,6 +132,6 @@ Read [integration contracts](contracts.md) before changing transport, resume beh
 
 Open a focused issue before proposing a new integration boundary. Use disposable reproductions, add a regression for behavioral fixes and keep one writer per shared working tree. Preserve the explicit compatibility/ownership/lifecycle guarantees and document any remaining limits.
 
-A project-wide reuse/contribution license has not yet been selected; resolve licensing before relying on or contributing reusable code. Bundled third-party notices are separate. Report sensitive issues [privately](../.github/SECURITY.md).
+Project code is [MIT-licensed](../LICENSE). Preserve the bundled project and third-party notices. Report sensitive issues [privately](../.github/SECURITY.md).
 
 [README](../README.md) · [Compatibility](compatibility.md) · [Third-party notices](third-party.md)

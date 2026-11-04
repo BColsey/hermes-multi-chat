@@ -22,7 +22,7 @@ spec.loader.exec_module(installer)
 def archive(path, extras=None):
     manifest = {
         "name": "multi-chat",
-        "version": "0.1.0",
+        "version": installer.VERSION,
         "tab": {"path": "/multi-chat"},
         "entry": "dist/index.js",
         "css": "dist/style.css",

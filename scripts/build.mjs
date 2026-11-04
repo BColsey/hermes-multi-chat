@@ -36,6 +36,7 @@ const xterm = (
 );
 await writeFile("dashboard/dist/style.css", xterm + "\n" + css);
 await mkdir("dashboard/dist/licenses", { recursive: true });
+await copyFile("LICENSE", "dashboard/dist/licenses/multi-chat.txt");
 for (const name of ["xterm", "addon-fit", "addon-unicode11"])
   await copyFile(
     "node_modules/@xterm/" + name + "/LICENSE",

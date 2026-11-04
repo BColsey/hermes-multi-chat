@@ -14,6 +14,6 @@ Their original license text is copied into `dashboard/dist/licenses/` in every p
 
 React is supplied by the host Hermes dashboard; Multi Chat does not ship another copy. Build/test tools are development dependencies, not services or packages installed into Hermes by `install.py`.
 
-This project has not yet selected a project-wide reuse license. Dependency licenses do not grant a license to unrelated project code. Hermes and Nous Research names identify the integration; this is an independent community plugin.
+Project code is licensed under [MIT](../LICENSE), copyright © 2026 BColsey. Its full notice is included in `dashboard/dist/licenses/multi-chat.txt` and in the standalone installer. Third-party copyright notices remain unchanged. Hermes and Nous Research names identify the integration; this is an independent community plugin.
 
 [README](../README.md#licensing) · [Build and release](development.md#release-checklist)

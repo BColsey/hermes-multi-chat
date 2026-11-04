@@ -4,6 +4,28 @@
 Run as the OS user who runs Hermes. No sudo, pip install, auth token, service
 restart or model-default change is performed. An installed Hermes Python is
 used only for its existing configuration reader/writer.
+
+MIT License
+
+Copyright (c) 2026 BColsey
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
 
 from __future__ import annotations
@@ -28,7 +50,7 @@ import tempfile
 import urllib.error
 import urllib.request
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 HERMES_VERSION = "0.22.6"
 HERMES_COMMIT = "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab"
 REPOSITORY = "BColsey/hermes-multi-chat"
