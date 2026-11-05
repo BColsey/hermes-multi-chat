@@ -24,8 +24,8 @@
     "test": "vitest run",
     "test:browser": "playwright test",
     "package": "npm run build && node scripts/package.mjs",
-    "catalog": "npm run build && node scripts/catalog.mjs",
-    "catalog:check": "node scripts/catalog.mjs --check",
+    "catalog": "npm run build && python3 scripts/catalog.py",
+    "catalog:check": "python3 scripts/catalog.py --check",
     "test:python": "python3 -m unittest discover -s tests -p 'test_*.py' -v",
     "check:public": "node scripts/check-public.mjs",
     "sbom": "node scripts/sbom.mjs"

@@ -39,10 +39,11 @@
     ]
   },
   "checks": {
-    "typescript_unit": 41,
+    "typescript_unit": 42,
     "catalog_file_swap_regressions": {
       "read": "passed; demonstrated failing before descriptor reads",
-      "write": "passed; demonstrated outside-fixture overwrite before no-follow descriptor writes"
+      "write": "passed; demonstrated outside-fixture overwrite before no-follow descriptor writes",
+      "parent": "passed; demonstrated outside-directory overwrite before directory-relative parent/file opens"
     },
     "python_total": 15,
     "python_real_hermes_config_writer_integration": 2,
@@ -160,7 +161,10 @@
   },
   "independent_review": {
     "mode": "read-only, no shell commands",
-    "blocking_findings": 0,
+    "addressed_findings": [
+      "leaf read/write swaps use validated descriptors",
+      "ancestor-directory swaps use POSIX directory-relative opens"
+    ],
     "tests": "parent-supplied evidence, not independently rerun",
     "remaining_decision": "maintainer acceptance of the private in-process seam"
   },

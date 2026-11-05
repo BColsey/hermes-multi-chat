@@ -7,7 +7,7 @@ Build locally, test the small seams, then exercise the **real Hermes dashboard i
 ## Toolchain
 
 - Node.js **22+** and npm; use the committed `package-lock.json`.
-- Python **3.11+** for the installer/unit suite. Hermes integration uses Hermes's own installed Python.
+- Python **3.11+** for the installer/unit suite and POSIX catalog packager. Hermes integration uses Hermes's own installed Python.
 - GNU tar for deterministic release packaging (`--sort`, `--mtime`, `--transform`).
 - Real-dashboard tests require the [pinned Hermes build](compatibility.md), its already working TUI/dependencies and Chromium via Playwright.
 

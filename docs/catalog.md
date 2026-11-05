@@ -20,7 +20,7 @@ npm run check:public
 
 Commit the generated `catalog/` distribution alongside its source. Catalog installs clone an exact source commit: a release archive alone is insufficient. The catalog entry must use `subdir: catalog`.
 
-The package contains only its manifest, README, MIT notice, no-op agent entrypoint, and the dashboard's manifest, read-only API, local IIFE/CSS and four license notices. It excludes the standalone installer, build metadata, development tools, credentials, evidence/state and self-updating code. The build preloads inputs, rejects version mismatches and unexpected/non-regular package entries, and checks runtime bytes against the normal build. Do not hand-edit generated payloads.
+The package contains only its manifest, README, MIT notice, no-op agent entrypoint, and the dashboard's manifest, read-only API, local IIFE/CSS and four license notices. It excludes the standalone installer, build metadata, development tools, credentials, evidence/state and self-updating code. The Python standard-library build preloads inputs, rejects version mismatches and unexpected/non-regular package entries, and checks runtime bytes against the normal build. Directory-relative opens pin every parent component and the final file without following symlinks; file type is checked on the opened descriptor before reading or truncating. Do not hand-edit generated payloads.
 
 `__init__.py` supplies the empty `register(ctx)` entrypoint required by Hermes 0.22.6's directory-plugin validator. It registers no tools, hooks, middleware, providers, environment requirements or background jobs.
 

@@ -11,7 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
-const script = resolve("scripts/catalog.mjs");
+const script = resolve("scripts/catalog.py");
 function fixture() {
   const root = mkdtempSync(resolve(tmpdir(), "multi-chat-catalog-"));
   mkdirSync(resolve(root, "dashboard/dist/licenses"), { recursive: true });
@@ -45,7 +45,7 @@ function fixture() {
   return { root, files };
 }
 function run(root: string, check = false) {
-  return spawnSync(process.execPath, [script, ...(check ? ["--check"] : [])], {
+  return spawnSync("python3", [script, ...(check ? ["--check"] : [])], {
     cwd: root,
     encoding: "utf8",
   });
@@ -119,82 +119,71 @@ test("catalog build refuses mismatched versions before replacing generated files
   }
 });
 
-test("catalog check refuses an output swapped for a symlink before reading", () => {
-  const f = fixture();
-  try {
-    expect(run(f.root).status).toBe(0);
-    const outside = resolve(f.root, "outside.js");
-    writeFileSync(outside, f.files["dist/index.js"]);
-    const preload = resolve(f.root, "swap.mjs");
-    writeFileSync(
-      preload,
-      `
-import { createRequire, syncBuiltinESMExports } from "node:module";
-const fs = createRequire(import.meta.url)("node:fs");
-let swapped = false;
-function swap(path) {
-  if (path !== "catalog/dashboard/dist/index.js" || swapped) return;
-  swapped = true;
-  fs.renameSync(path, path + ".old");
-  fs.symlinkSync(process.env.OUTSIDE_FIXTURE, path);
-}
-const stat = fs.lstatSync;
-fs.lstatSync = (path, ...args) => { const value = stat(path, ...args); swap(path); return value; };
-const open = fs.openSync;
-fs.openSync = (path, ...args) => { swap(path); return open(path, ...args); };
-syncBuiltinESMExports();
+function swapRun(
+  f: ReturnType<typeof fixture>,
+  kind: "read" | "write" | "parent",
+) {
+  const outside = resolve(
+    f.root,
+    kind === "parent" ? "outside-dir" : "outside.js",
+  );
+  const sentinel =
+    kind === "read"
+      ? f.files["dist/index.js"]
+      : "outside fixture must not change";
+  if (kind === "parent") mkdirSync(outside);
+  const target = kind === "parent" ? resolve(outside, "index.js") : outside;
+  writeFileSync(target, sentinel);
+  const preload = resolve(f.root, "swap.py");
+  writeFileSync(
+    preload,
+    `
+import os, runpy, sys
+source = sys.argv[1]
+sys.argv = [source] + sys.argv[2:]
+original_open = os.open
+target_inode = os.stat("catalog/dashboard/dist").st_ino
+swapped = False
+def open_with_swap(path, flags, *args, **kwargs):
+    global swapped
+    fd = kwargs.get("dir_fd")
+    if path == "index.js" and fd is not None and os.fstat(fd).st_ino == target_inode and not swapped:
+        swapped = True
+        with open("swap-fired", "w") as marker:
+            marker.write(os.environ["SWAP_KIND"])
+        if os.environ["SWAP_KIND"] == "parent":
+            os.rename("catalog/dashboard/dist", "catalog/dashboard/dist.old")
+            os.symlink(os.environ["OUTSIDE_FIXTURE"], "catalog/dashboard/dist")
+        else:
+            os.rename("catalog/dashboard/dist/index.js", "catalog/dashboard/dist/index.js.old")
+            os.symlink(os.environ["OUTSIDE_FIXTURE"], "catalog/dashboard/dist/index.js")
+    return original_open(path, flags, *args, **kwargs)
+os.open = open_with_swap
+os.supports_dir_fd.add(open_with_swap)
+runpy.run_path(source, run_name="__main__")
 `,
-    );
-    const result = spawnSync(
-      process.execPath,
-      ["--import", preload, script, "--check"],
-      {
-        cwd: f.root,
-        encoding: "utf8",
-        env: { ...process.env, OUTSIDE_FIXTURE: outside },
-      },
-    );
-    expect(result.status).toBe(1);
-  } finally {
-    rmSync(f.root, { recursive: true, force: true });
-  }
-});
-
-test("catalog build never writes through an output swapped for a symlink", () => {
-  const f = fixture();
-  try {
-    expect(run(f.root).status).toBe(0);
-    const outside = resolve(f.root, "outside.js");
-    const sentinel = "outside fixture must not change";
-    writeFileSync(outside, sentinel);
-    const preload = resolve(f.root, "swap-write.mjs");
-    writeFileSync(
-      preload,
-      `
-import { createRequire, syncBuiltinESMExports } from "node:module";
-const fs = createRequire(import.meta.url)("node:fs");
-let swapped = false;
-function swap(path) {
-  if (path !== "catalog/dashboard/dist/index.js" || swapped) return;
-  swapped = true;
-  fs.renameSync(path, path + ".old");
-  fs.symlinkSync(process.env.OUTSIDE_FIXTURE, path);
-}
-const write = fs.writeFileSync;
-fs.writeFileSync = (path, ...args) => { swap(path); return write(path, ...args); };
-const open = fs.openSync;
-fs.openSync = (path, ...args) => { swap(path); return open(path, ...args); };
-syncBuiltinESMExports();
-`,
-    );
-    const result = spawnSync(process.execPath, ["--import", preload, script], {
+  );
+  const result = spawnSync(
+    "python3",
+    [preload, script, ...(kind === "read" ? ["--check"] : [])],
+    {
       cwd: f.root,
       encoding: "utf8",
-      env: { ...process.env, OUTSIDE_FIXTURE: outside },
-    });
-    expect(result.status).toBe(1);
-    expect(readFileSync(outside, "utf8")).toBe(sentinel);
-  } finally {
-    rmSync(f.root, { recursive: true, force: true });
-  }
-});
+      env: { ...process.env, OUTSIDE_FIXTURE: outside, SWAP_KIND: kind },
+    },
+  );
+  expect(result.status).toBe(1);
+  expect(readFileSync(resolve(f.root, "swap-fired"), "utf8")).toBe(kind);
+  expect(readFileSync(target, "utf8")).toBe(sentinel);
+}
+
+for (const kind of ["read", "write", "parent"] as const)
+  test(`catalog ${kind} path swap cannot read or overwrite an outside fixture`, () => {
+    const f = fixture();
+    try {
+      expect(run(f.root).status).toBe(0);
+      swapRun(f, kind);
+    } finally {
+      rmSync(f.root, { recursive: true, force: true });
+    }
+  });
