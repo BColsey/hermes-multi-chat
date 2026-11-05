@@ -4,7 +4,7 @@
 
 ## Automated checks
 
-The [Security workflow](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml) runs on pushes to `main`, pull requests, manual requests, and **Mondays at 06:23 UTC** on GitHub-hosted runners.
+The [Security workflow](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml) runs on pushes to `main`, trusted repository-owner pull requests, manual requests, and **Mondays at 06:23 UTC** on the owner's **R720 self-hosted runner**. Build checks and release SBOM generation use the same `self-hosted, linux, x64, r720-multi-chat` selector, with no GitHub-hosted fallback.
 
 - **CodeQL, security-extended:** JavaScript/TypeScript, Python and GitHub Actions. Findings appear in the repository's **Security → Code scanning** tab. A successful analysis/upload is not a guarantee that there are no open alerts.
 - **npm audit:** the entire locked npm tree, including development tools. High/critical findings fail the job; lower-severity findings remain visible in its `dependency-audits` artifact rather than being suppressed.
@@ -15,6 +15,18 @@ The [Security workflow](https://github.com/BColsey/hermes-multi-chat/actions/wor
 Audit reports are retained as Actions artifacts for 30 days. Do not interpret a green severity gate as “all dependency findings resolved.” Review lower-severity development findings and keep test/lint tools maintained. Use current `main` for maintained development tooling; old release tags remain immutable.
 
 These checks inspect the **public repository**, not a running Hermes server or private `.dev/` state. They do not exercise model/tool approvals, prove the known attachment race is absent, or certify the whole Hermes deployment. See [compatibility](compatibility.md).
+
+## Runner trust boundary
+
+The repository-scoped R720 worker is an unprivileged container with its own persistent home/work/cache volume, four CPU threads and 8 GiB RAM (no extra swap). It has no host project, Hermes credential directory, Docker socket or device mounts. Containers share the host kernel: this is not a sandbox for arbitrary hostile code.
+
+Only owner-authored PRs whose head is in this repository may automatically run these jobs. Fork and bot PR jobs are skipped; an owner must review the code before explicitly dispatching a trusted branch. Repository policy additionally requires approval for **all external contributors**, not just first-time contributors. Do not approve a fork workflow that removes these protections or queues untrusted code on persistent workers. No `pull_request_target` checkout of an incoming PR is used.
+
+These settings control this repository only. Nous controls the workflows/runners for an upstream Hermes catalog PR; R720 results do not bypass its maintainer approval or replace its required checks.
+
+Dependabot's update-generation jobs are a separate GitHub-managed service: GitHub does not support self-hosting them for a **public** repository. Do not describe those jobs as moved to R720. Vulnerability alerts and the R720 npm/pip audits remain separate from automatic update PR generation.
+
+Old release tags remain immutable and can contain the former hosted-runner definitions. Do not rerun workflows from those historical refs. For maintained automation use current `main`; SBOM dispatch on `main` reads a release tag as data without executing that tag's workflow. Runner unavailability queues jobs rather than selecting a hosted fallback.
 
 ## Download a release SBOM
 
@@ -41,7 +53,7 @@ The [Release SBOM workflow](https://github.com/BColsey/hermes-multi-chat/actions
 
 1. Validates the version tag and checks out that exact release's source in a separate directory.
 2. Downloads only its plugin archive, installer and checksum receipts.
-3. Verifies those hashes and generates a production-only inventory with npm's built-in `sbom` command. It does not install or run scripts from the released source.
+3. Verifies those hashes and generates a production-only inventory with npm's built-in `sbom` command. The job pins npm **10.9.9** in its temporary tool directory to preserve the published v0.2.0 generation-tool metadata. It does not install or run scripts from the released source.
 4. Validates the official CycloneDX 1.5 schema.
 5. Attaches the SBOM and its separate receipt without replacing existing assets or moving tags.
 
@@ -72,6 +84,6 @@ npm run sbom
 (cd artifacts && sha256sum --check multi-chat-0.2.0.cdx.json.sha256)
 ```
 
-The local command inventories the current checkout. Published metadata uses the exact release tag instead. Python environments without `ensurepip` should use an already available environment manager or the GitHub-hosted workflow; do not install OS packages or modify a live Hermes environment just to run these checks.
+The local command inventories the current checkout. Published metadata uses the exact release tag instead. Python environments without `ensurepip` should use an already available environment manager or the R720 workflow; do not install OS packages or modify a live Hermes environment just to run these checks.
 
 [Report a vulnerability privately](../.github/SECURITY.md) · [Development and release](development.md) · [Third-party notices](third-party.md)

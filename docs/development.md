@@ -35,7 +35,7 @@ npm run catalog:check
 npm audit --audit-level=high
 ```
 
-The fast Python suite skips two **real Hermes config-writer** cases unless `HERMES_SOURCE` and `HERMES_PYTHON` are set. GitHub-hosted CI runs the fast checks; it does not claim model-backed or real-dashboard browser coverage. Do not run untrusted pull requests on a machine with private Hermes state/credentials.
+The fast Python suite skips two **real Hermes config-writer** cases unless `HERMES_SOURCE` and `HERMES_PYTHON` are set. CI runs the fast checks in the isolated R720 self-hosted worker; it does not claim model-backed or real-dashboard browser coverage. Do not run untrusted pull requests on a machine with private Hermes state/credentials.
 
 ESLint covers TypeScript; Prettier checks frontend/tests/build/config files. To format these after an edit:
 
