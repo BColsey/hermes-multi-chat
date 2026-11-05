@@ -29,12 +29,13 @@ jobs:
       - run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
       - run: npm run typecheck
       - run: npm run lint
-      - run: ruff format --check install.py dashboard scripts tests
-      - run: ruff check install.py dashboard scripts tests
+      - run: ruff format --check install.py dashboard catalog scripts tests
+      - run: ruff check install.py dashboard catalog scripts tests
       - run: npm test
       - run: npm run test:python
       - run: npm run check:public
       - run: npm run package
+      - run: npm run catalog:check
       - name: Check archive and installer digests
         working-directory: artifacts
         run: sha256sum --check SHA256SUMS

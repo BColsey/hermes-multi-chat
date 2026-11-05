@@ -19,6 +19,7 @@ Multi Chat adds independent terminal conversations to the **Hermes Web Dashboard
 ## Develop and contribute
 
 - **[Development guide](development.md)** — build, tests, isolated dashboard and release checklist.
+- **[Catalog review](catalog.md)** — installable source package, admission disclosures, isolated validation and reviewed SHA pins.
 - **[Third-party notices](third-party.md)** — bundled xterm packages and their licenses.
 - **[Security policy](../.github/SECURITY.md)** — report a sensitive problem privately.
 

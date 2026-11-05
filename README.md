@@ -23,6 +23,16 @@ Multi Chat adds an **adjustable 1–16-pane workspace** to the existing **Hermes
 - **HTTP-safe isolation.** Per-pane identities and atomic browser reservations work without Web Locks, including cloned tabs.
 - **No core patch.** Uses the Dashboard plugin SDK, locally bundled xterm assets and a small read-only FastAPI adapter. No extra service, second React or runtime CDN.
 
+## Installation disclosures
+
+The backend adapter runs **inside the dashboard process with its authority**, not in a sandbox. It reads undocumented `hermes_cli.web_server` / `web_server_chat` PTY registries and core-owned active-session marker files to verify retention and identity. It does not patch core methods or mutate those registries. This private seam can break on any core change and may require a public API before catalog acceptance; the exact-build/default-profile/in-process restrictions are intentional.
+
+Starting/resuming a pane explicitly asks Hermes to launch/attach a **real TUI process and agent session**. Native tools, shell execution, provider network calls and approvals remain Hermes's responsibility under your existing settings. Hidden panes continue working. The plugin adds no executor, automatic approval, resource-limit increase, telemetry, runtime CDN or independent external service.
+
+The plugin uses SDK-managed, authenticated same-origin APIs, including existing session/project metadata. It does not read credential stores such as `.env`, `auth.json`, browser passwords or another tool's login. Browser sessionStorage holds layouts/workspaces/selections; IndexedDB/localStorage hold session/attachment ownership identifiers and release proofs—not transcripts, stored prompts or credentials. The adapter reads only core identity markers and returns retention/session/attachment metadata through an authenticated route.
+
+The [catalog distribution and complete disclosures](catalog/README.md) omit the standalone installer and development tooling. It has no self-updater or agent capabilities; future catalog updates require a reviewed SHA-bump PR. Catalog packaging is not catalog approval. See the [review procedure](docs/catalog.md).
+
 ## Install in a few minutes
 
 Run these commands **on the machine that runs Hermes**, as the same OS user. Python 3.11+ and a compatible, already working Hermes installation are required. No Node.js, pip install, dashboard password or API token is needed to install the prebuilt release.

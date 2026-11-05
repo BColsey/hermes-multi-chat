@@ -10,6 +10,8 @@
 - Support Alt+Shift+1–9 for existing panes and keyboard/pointer resizing across multiple grid boundaries.
 - Report connection readiness only after identity verification; allow live identity revalidation without spuriously rejecting input from other panes' metadata updates. Pending input never crosses a socket/session change.
 - Preserve the existing shared 16-PTY limit and all execution/auth/model behavior. No backend/core patch is included.
+- Add a minimal source-pinned catalog distribution, native-plugin metadata and explicit installation disclosures; catalog acceptance remains a maintainer decision.
+- Verify native catalog admission and Git/subdirectory installation in disposable Hermes state without changing the dashboard runtime payload.
 
 ## 0.1.1 — MIT licensing
 

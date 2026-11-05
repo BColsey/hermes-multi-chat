@@ -1,0 +1,590 @@
+
+.mc-root /**
+ * Copyright (c) 2014 The xterm.js authors. All rights reserved.
+ * Copyright (c) 2012-2013,.mc-root Christopher Jeffrey (MIT License)
+ * https://github.com/chjj/term.js
+ * @license MIT
+ *
+ * Permission is hereby granted,.mc-root free of charge,.mc-root to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"),.mc-root to deal
+ * in the Software without restriction,.mc-root including without limitation the rights
+ * to use,.mc-root copy,.mc-root modify,.mc-root merge,.mc-root publish,.mc-root distribute,.mc-root sublicense,.mc-root and/or sell
+ * copies of the Software,.mc-root and to permit persons to whom the Software is
+ * furnished to do so,.mc-root subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS",.mc-root WITHOUT WARRANTY OF ANY KIND,.mc-root EXPRESS OR
+ * IMPLIED,.mc-root INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,.mc-root * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,.mc-root DAMAGES OR OTHER
+ * LIABILITY,.mc-root WHETHER IN AN ACTION OF CONTRACT,.mc-root TORT OR OTHERWISE,.mc-root ARISING FROM,.mc-root * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Originally forked from (with the author's permission):
+ *   Fabrice Bellard's javascript vt100 for jslinux:
+ *   http://bellard.org/jslinux/
+ *   Copyright (c) 2011 Fabrice Bellard
+ *   The original design remains. The terminal itself
+ *   has been extended to include xterm CSI codes,.mc-root among
+ *   other features.
+ */
+
+/**
+ *  Default styles for xterm.js
+ */
+
+.xterm {
+    cursor: text;
+    position: relative;
+    user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}
+.mc-root .xterm.focus,.mc-root .xterm:focus {
+    outline: none;
+}
+.mc-root .xterm .xterm-helpers {
+    position: absolute;
+    top: 0;
+    /**
+     * The z-index of the helpers must be higher than the canvases in order for
+     * IMEs to appear on top.
+     */
+    z-index: 5;
+}
+.mc-root .xterm .xterm-helper-textarea {
+    padding: 0;
+    border: 0;
+    margin: 0;
+    /* Move textarea out of the screen to the far left, so that the cursor is not visible */
+    position: absolute;
+    opacity: 0;
+    left: -9999em;
+    top: 0;
+    width: 0;
+    height: 0;
+    z-index: -5;
+    /** Prevent wrapping so the IME appears against the textarea at the correct position */
+    white-space: nowrap;
+    overflow: hidden;
+    resize: none;
+}
+.mc-root .xterm .composition-view {
+    /* TODO: Composition position got messed up somewhere */
+    background: #000;
+    color: #FFF;
+    display: none;
+    position: absolute;
+    white-space: nowrap;
+    z-index: 1;
+}
+.mc-root .xterm .composition-view.active {
+    display: block;
+}
+.mc-root .xterm .xterm-viewport {
+    /* On OS X this is required in order for the scroll bar to appear fully opaque */
+    background-color: #000;
+    overflow-y: scroll;
+    cursor: default;
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+.mc-root .xterm .xterm-screen {
+    position: relative;
+}
+.mc-root .xterm .xterm-screen canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.mc-root .xterm-char-measure-element {
+    display: inline-block;
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: -9999em;
+    line-height: normal;
+}
+.mc-root .xterm.enable-mouse-events {
+    /* When mouse events are enabled (eg. tmux), revert to the standard pointer cursor */
+    cursor: default;
+}
+.mc-root .xterm.xterm-cursor-pointer,.mc-root .xterm .xterm-cursor-pointer {
+    cursor: pointer;
+}
+.mc-root .xterm.column-select.focus {
+    /* Column selection mode */
+    cursor: crosshair;
+}
+.mc-root .xterm .xterm-accessibility:not(.debug),.mc-root .xterm .xterm-message {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    color: transparent;
+    pointer-events: none;
+}
+.mc-root .xterm .xterm-accessibility-tree:not(.debug) *::selection {
+  color: transparent;
+}
+.mc-root .xterm .xterm-accessibility-tree {
+  font-family: monospace;
+  user-select: text;
+  white-space: pre;
+}
+.mc-root .xterm .xterm-accessibility-tree > div {
+  transform-origin: left;
+  width: fit-content;
+}
+.mc-root .xterm .live-region {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+.mc-root .xterm-dim {
+    /* Dim should not apply to background, so the opacity of the foreground color is applied
+     * explicitly in the generated class and reset to 1 here */
+    opacity: 1 !important;
+}
+.mc-root .xterm-underline-1 { text-decoration: underline; }
+.mc-root .xterm-underline-2 { text-decoration: double underline; }
+.mc-root .xterm-underline-3 { text-decoration: wavy underline; }
+.mc-root .xterm-underline-4 { text-decoration: dotted underline; }
+.mc-root .xterm-underline-5 { text-decoration: dashed underline; }
+.mc-root .xterm-overline {
+    text-decoration: overline;
+}
+.mc-root .xterm-overline.xterm-underline-1 { text-decoration: overline underline; }
+.mc-root .xterm-overline.xterm-underline-2 { text-decoration: overline double underline; }
+.mc-root .xterm-overline.xterm-underline-3 { text-decoration: overline wavy underline; }
+.mc-root .xterm-overline.xterm-underline-4 { text-decoration: overline dotted underline; }
+.mc-root .xterm-overline.xterm-underline-5 { text-decoration: overline dashed underline; }
+.mc-root .xterm-strikethrough {
+    text-decoration: line-through;
+}
+.mc-root .xterm-screen .xterm-decoration-container .xterm-decoration {
+	z-index: 6;
+	position: absolute;
+}
+.mc-root .xterm-screen .xterm-decoration-container .xterm-decoration.xterm-decoration-top-layer {
+	z-index: 7;
+}
+.mc-root .xterm-decoration-overview-ruler {
+    z-index: 8;
+    position: absolute;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+}
+.mc-root .xterm-decoration-top {
+    z-index: 2;
+    position: relative;
+}
+.mc-root /* Derived from vs/base/browser/ui/scrollbar/media/scrollbar.css */
+
+/* xterm.js customization: Override xterm's cursor style */
+.xterm .xterm-scrollable-element > .scrollbar {
+    cursor: default;
+}
+.mc-root /* Arrows */
+.xterm .xterm-scrollable-element > .scrollbar > .scra {
+	cursor: pointer;
+	font-size: 11px !important;
+}
+.mc-root .xterm .xterm-scrollable-element > .visible {
+	opacity: 1;
+
+	/* Background rule added for IE9 - to allow clicks on dom node */
+	background:rgba(0,0,0,0);
+
+	transition: opacity 100ms linear;
+	/* In front of peek view */
+	z-index: 11;
+}
+.mc-root .xterm .xterm-scrollable-element > .invisible {
+	opacity: 0;
+	pointer-events: none;
+}
+.mc-root .xterm .xterm-scrollable-element > .invisible.fade {
+	transition: opacity 800ms linear;
+}
+.mc-root /* Scrollable Content Inset Shadow */
+.xterm .xterm-scrollable-element > .shadow {
+	position: absolute;
+	display: none;
+}
+.mc-root .xterm .xterm-scrollable-element > .shadow.top {
+	display: block;
+	top: 0;
+	left: 3px;
+	height: 3px;
+	width: 100%;
+	box-shadow: var(--vscode-scrollbar-shadow, #000) 0 6px 6px -6px inset;
+}
+.mc-root .xterm .xterm-scrollable-element > .shadow.left {
+	display: block;
+	top: 3px;
+	left: 0;
+	height: 100%;
+	width: 3px;
+	box-shadow: var(--vscode-scrollbar-shadow, #000) 6px 0 6px -6px inset;
+}
+.mc-root .xterm .xterm-scrollable-element > .shadow.top-left-corner {
+	display: block;
+	top: 0;
+	left: 0;
+	height: 3px;
+	width: 3px;
+}
+.mc-root .xterm .xterm-scrollable-element > .shadow.top.left {
+	box-shadow: var(--vscode-scrollbar-shadow, #000) 6px 0 6px -6px inset;
+}
+
+.mc-root {
+  color: var(--color-foreground, #e1edef);
+  font-family: inherit;
+  max-width: none;
+}
+.mc-root *,
+.mc-root *::before,
+.mc-root *::after {
+  box-sizing: border-box;
+}
+.mc-root button,
+.mc-root input,
+.mc-root select {
+  font: inherit;
+  font-size: 0.8rem;
+}
+.mc-root button {
+  border: 1px solid var(--color-border, #35515a);
+  border-radius: var(--radius, 6px);
+  background: var(--color-secondary, #162a30);
+  color: var(--color-foreground, #e1edef);
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+  min-height: 32px;
+}
+.mc-root button:hover {
+  background: var(--color-accent, #24424b);
+}
+.mc-root button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mc-root button[aria-pressed="true"],
+.mc-root .mc-primary {
+  border-color: var(--color-primary, #4fd1c5);
+}
+.mc-root button:focus-visible,
+.mc-root input:focus-visible,
+.mc-root select:focus-visible,
+.mc-root summary:focus-visible,
+.mc-splitter:focus-visible {
+  outline: 2px solid var(--color-ring, #4fd1c5);
+  outline-offset: 2px;
+}
+.mc-root h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 650;
+}
+.mc-root p {
+  margin: 0.25rem 0;
+}
+.mc-page-heading,
+.mc-pane-heading,
+.mc-actions,
+.mc-terminal-toolbar {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.mc-page-heading {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.mc-page-heading p,
+.mc-footer,
+.mc-help {
+  color: var(--color-muted-foreground, #a3b9bd);
+  font-size: 0.78rem;
+}
+.mc-actions {
+  flex-wrap: wrap;
+}
+.mc-count-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+}
+.mc-count-label select {
+  min-height: 32px;
+  border: 1px solid var(--color-border, #35515a);
+  border-radius: var(--radius, 6px);
+  color: var(--color-foreground, #e1edef);
+  background: var(--color-secondary, #162a30);
+  padding: 0.3rem;
+}
+.mc-count-help {
+  font-size: 0.73rem;
+  color: var(--color-muted-foreground, #a3b9bd);
+}
+.mc-help {
+  margin: 0.5rem 0;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border, #35515a);
+  border-radius: var(--radius, 6px);
+}
+.mc-help summary {
+  cursor: pointer;
+}
+.mc-help p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+.mc-help code {
+  color: var(--color-foreground, #e1edef);
+}
+.mc-grid {
+  position: relative;
+  display: grid;
+  gap: 0;
+  height: calc(100dvh - 265px);
+  min-height: max(600px, calc(var(--mc-grid-rows, 2) * 300px));
+}
+.mc-pane {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--color-border, #35515a);
+  border-radius: var(--radius, 6px);
+  background: var(--color-card, #142126);
+  overflow: hidden;
+}
+.mc-pane[hidden] {
+  display: none !important;
+}
+.mc-focused {
+  border-color: var(--color-primary, #4fd1c5);
+  box-shadow: 0 0 0 1px var(--color-primary, #4fd1c5);
+}
+.mc-pane-heading {
+  padding: 0.35rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.mc-pane-focus {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 80px;
+  text-align: left;
+}
+.mc-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 22vw;
+}
+.mc-number {
+  font-weight: 750;
+  border-radius: 3px;
+  padding: 0 0.3rem;
+  color: var(--color-primary, #4fd1c5);
+}
+.mc-focused .mc-number {
+  background: var(--color-primary, #4fd1c5);
+  color: var(--color-primary-foreground, #062a2c);
+}
+.mc-state {
+  font-size: 0.7rem;
+  color: var(--color-muted-foreground, #a3b9bd);
+}
+.mc-connected {
+  color: var(--color-primary, #4fd1c5);
+}
+.mc-error,
+.mc-conflict {
+  color: var(--color-destructive, #ff8c8c);
+}
+.mc-workspace {
+  padding: 0 0.6rem 0.35rem;
+  font-size: 0.72rem;
+  color: var(--color-muted-foreground, #a3b9bd);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.mc-terminal-toolbar {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  flex-wrap: wrap;
+  background: var(--color-muted, #172c31);
+  flex-shrink: 0;
+}
+.mc-terminal-toolbar > span {
+  max-width: 42%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-terminal-toolbar .mc-session-id {
+  flex: 1;
+  color: var(--color-muted-foreground, #a3b9bd);
+}
+.mc-terminal-toolbar button {
+  margin-left: auto;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.3rem;
+}
+.mc-terminal {
+  flex: 1;
+  min-height: 90px;
+  min-width: 0;
+  padding: 4px;
+  background: #0b1518;
+  overflow: hidden;
+}
+.mc-terminal > .xterm {
+  height: 100%;
+}
+.mc-setup {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding: 0.8rem;
+}
+.mc-setup label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+.mc-setup input,
+.mc-setup select {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  border: 1px solid var(--color-border, #35515a);
+  background: var(--color-background, #0b1518);
+  color: var(--color-foreground, #e1edef);
+  border-radius: var(--radius, 6px);
+  padding: 0.4rem;
+}
+.mc-start-warning {
+  font-size: 0.73rem;
+  color: var(--color-muted-foreground, #a3b9bd);
+  line-height: 1.4;
+}
+.mc-or {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground, #a3b9bd);
+  border-top: 1px solid var(--color-border, #35515a);
+  padding-top: 0.65rem;
+}
+.mc-notice {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  padding: 0.5rem;
+  background: var(--color-muted, #172c31);
+  border: 1px solid var(--color-border, #35515a);
+  border-radius: var(--radius, 6px);
+  margin: 0.25rem 0;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.mc-pane > .mc-notice {
+  max-height: 45%;
+  overflow-y: auto;
+}
+.mc-notice button {
+  margin: 0.25rem;
+}
+.mc-footer {
+  margin-top: 0.6rem !important;
+}
+.mc-splitter {
+  position: relative;
+  z-index: 2;
+  touch-action: none;
+}
+.mc-splitter::after {
+  content: "";
+  position: absolute;
+  background: var(--color-muted-foreground, #a3b9bd);
+  border-radius: 3px;
+  opacity: 0.5;
+}
+.mc-splitter:hover::after,
+.mc-splitter:focus::after {
+  background: var(--color-primary, #4fd1c5);
+  opacity: 1;
+}
+.mc-splitter-vertical {
+  cursor: col-resize;
+}
+.mc-splitter-vertical::after {
+  width: 3px;
+  top: 45%;
+  bottom: 45%;
+  left: 3px;
+}
+.mc-splitter-horizontal {
+  cursor: row-resize;
+}
+.mc-splitter-horizontal::after {
+  height: 3px;
+  left: 45%;
+  right: 45%;
+  top: 3px;
+}
+.mc-maximized > .mc-pane:not([hidden]) {
+  grid-area: 1 / 1 / -1 / -1 !important;
+}
+@media (max-width: 900px) {
+  .mc-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    height: auto;
+    min-height: 0;
+  }
+  .mc-pane {
+    flex: none;
+    height: 65dvh;
+    min-height: 420px;
+  }
+  .mc-maximized > .mc-pane {
+    height: 78dvh;
+  }
+  .mc-splitter {
+    display: none;
+  }
+  .mc-title {
+    max-width: 45vw;
+  }
+  .mc-page-heading .mc-actions {
+    width: 100%;
+  }
+  .mc-pane-heading button {
+    min-height: 38px;
+  }
+}

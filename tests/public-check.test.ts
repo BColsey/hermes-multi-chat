@@ -55,3 +55,30 @@ syncBuiltinESMExports();
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test("publication allows explicit catalog metadata but still refuses extra catalog data", () => {
+  const root = mkdtempSync(resolve(tmpdir(), "multi-chat-catalog-public-"));
+  const secret = "CATALOG_PRIVATE_TEST_SENTINEL";
+  execFileSync("git", ["init", "--quiet", root]);
+  mkdirSync(resolve(root, "catalog"));
+  writeFileSync(resolve(root, "README.md"), "# Public fixture\n");
+  writeFileSync(resolve(root, "catalog/plugin.yaml"), "name: multi-chat\n");
+  const check = () =>
+    spawnSync(process.execPath, [resolve("scripts/check-public.mjs")], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, PUBLICATION_TEST_SECRET: secret },
+    });
+  try {
+    expect(check().status).toBe(0);
+    writeFileSync(resolve(root, "catalog/private.txt"), secret);
+    const result = check();
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain(
+      "catalog/private.txt: unexpected publication path",
+    );
+    expect(result.stdout + result.stderr).not.toContain(secret);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

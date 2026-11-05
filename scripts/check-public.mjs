@@ -30,6 +30,17 @@ const roots = new Set([
   "vitest.config.ts",
   "playwright.config.ts",
   "eslint.config.mjs",
+  "catalog/README.md",
+  "catalog/LICENSE",
+  "catalog/__init__.py",
+  "catalog/plugin.yaml",
+  "catalog/dashboard/manifest.json",
+  "catalog/dashboard/plugin_api.py",
+  "catalog/dashboard/dist/index.js",
+  "catalog/dashboard/dist/style.css",
+  ...["multi-chat", "xterm", "addon-fit", "addon-unicode11"].map(
+    (name) => `catalog/dashboard/dist/licenses/${name}.txt`,
+  ),
 ]);
 const privatePath =
   /^(?:\.dev|\.serena|node_modules|artifacts|test-results|playwright-report|assets)(?:\/|$)|^docs\/evidence\/|^dashboard\/dist\/|(?:^|\/)\.env(?:\.|$)/;

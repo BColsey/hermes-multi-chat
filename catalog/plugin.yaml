@@ -1,0 +1,12 @@
+manifest_version: 1
+name: multi-chat
+version: "0.2.0"
+description: "Independent real-TUI conversations in the Hermes Web Dashboard."
+author: BColsey
+license: MIT
+kind: standalone
+requires_hermes: ">=0.22.6,<0.22.7"
+provides_tools: []
+provides_hooks: []
+provides_middleware: []
+requires_env: []

@@ -25,10 +25,12 @@ npm run typecheck
 npm run lint
 npm test
 npm run test:python
-ruff format --check install.py dashboard scripts tests
-ruff check install.py dashboard scripts tests
+ruff format --check install.py dashboard catalog scripts tests
+ruff check install.py dashboard catalog scripts tests
 npm run check:public
 npm run package
+npm run catalog
+npm run catalog:check
 (cd artifacts && sha256sum --check SHA256SUMS)
 npm audit --audit-level=high
 ```
@@ -40,7 +42,7 @@ ESLint covers TypeScript; Prettier checks frontend/tests/build/config files. To 
 ```bash
 npx prettier --write 'src/**/*.{ts,tsx,css}' 'tests/**/*.{ts,tsx}' \
   'scripts/*.mjs' '*.ts' 'eslint.config.mjs'
-ruff format install.py dashboard scripts tests
+ruff format install.py dashboard catalog scripts tests
 ```
 
 ## Real Hermes config-writer tests
@@ -128,6 +130,12 @@ Read [integration contracts](contracts.md) before changing transport, resume beh
 5. Tag the reviewed source, create an **experimental prerelease**, and upload only the archive, its `.sha256`, `install.py`, `install.py.sha256` and `SHA256SUMS` from `artifacts/`. Do not upload the whole artifacts directory.
 6. Confirm the [Release SBOM workflow](security.md#release-automation) attached the validated runtime inventory and its checksum (or manually backfill an older tag). Do not replace existing assets.
 7. Download the published files, verify checksums and preview the documented install. Publication is not a production installation/restart.
+
+## Catalog distribution
+
+`npm run catalog` produces the committed, minimal `catalog/` directory from the same runtime build. `npm run catalog:check` compares its exact payload and notices without repairing stale files. CI checks this after rebuilding, so the catalog cannot silently diverge from tested source. It excludes the standalone installer and development/security tools; no new runtime dependency or self-updater is introduced.
+
+Use the [catalog review procedure](catalog.md) for isolated Hermes validation, required disclosures and a data-only upstream entry PR. Do not run `--install-deps` against a live Hermes checkout/environment, suppress private-import warnings, or describe an unmerged submission as an approved listing.
 
 ## Contributing
 
