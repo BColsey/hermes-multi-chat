@@ -39,7 +39,11 @@
     ]
   },
   "checks": {
-    "typescript_unit": 39,
+    "typescript_unit": 41,
+    "catalog_file_swap_regressions": {
+      "read": "passed; demonstrated failing before descriptor reads",
+      "write": "passed; demonstrated outside-fixture overwrite before no-follow descriptor writes"
+    },
     "python_total": 15,
     "python_real_hermes_config_writer_integration": 2,
     "typecheck": "passed",

@@ -118,3 +118,83 @@ test("catalog build refuses mismatched versions before replacing generated files
     rmSync(f.root, { recursive: true, force: true });
   }
 });
+
+test("catalog check refuses an output swapped for a symlink before reading", () => {
+  const f = fixture();
+  try {
+    expect(run(f.root).status).toBe(0);
+    const outside = resolve(f.root, "outside.js");
+    writeFileSync(outside, f.files["dist/index.js"]);
+    const preload = resolve(f.root, "swap.mjs");
+    writeFileSync(
+      preload,
+      `
+import { createRequire, syncBuiltinESMExports } from "node:module";
+const fs = createRequire(import.meta.url)("node:fs");
+let swapped = false;
+function swap(path) {
+  if (path !== "catalog/dashboard/dist/index.js" || swapped) return;
+  swapped = true;
+  fs.renameSync(path, path + ".old");
+  fs.symlinkSync(process.env.OUTSIDE_FIXTURE, path);
+}
+const stat = fs.lstatSync;
+fs.lstatSync = (path, ...args) => { const value = stat(path, ...args); swap(path); return value; };
+const open = fs.openSync;
+fs.openSync = (path, ...args) => { swap(path); return open(path, ...args); };
+syncBuiltinESMExports();
+`,
+    );
+    const result = spawnSync(
+      process.execPath,
+      ["--import", preload, script, "--check"],
+      {
+        cwd: f.root,
+        encoding: "utf8",
+        env: { ...process.env, OUTSIDE_FIXTURE: outside },
+      },
+    );
+    expect(result.status).toBe(1);
+  } finally {
+    rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test("catalog build never writes through an output swapped for a symlink", () => {
+  const f = fixture();
+  try {
+    expect(run(f.root).status).toBe(0);
+    const outside = resolve(f.root, "outside.js");
+    const sentinel = "outside fixture must not change";
+    writeFileSync(outside, sentinel);
+    const preload = resolve(f.root, "swap-write.mjs");
+    writeFileSync(
+      preload,
+      `
+import { createRequire, syncBuiltinESMExports } from "node:module";
+const fs = createRequire(import.meta.url)("node:fs");
+let swapped = false;
+function swap(path) {
+  if (path !== "catalog/dashboard/dist/index.js" || swapped) return;
+  swapped = true;
+  fs.renameSync(path, path + ".old");
+  fs.symlinkSync(process.env.OUTSIDE_FIXTURE, path);
+}
+const write = fs.writeFileSync;
+fs.writeFileSync = (path, ...args) => { swap(path); return write(path, ...args); };
+const open = fs.openSync;
+fs.openSync = (path, ...args) => { swap(path); return open(path, ...args); };
+syncBuiltinESMExports();
+`,
+    );
+    const result = spawnSync(process.execPath, ["--import", preload, script], {
+      cwd: f.root,
+      encoding: "utf8",
+      env: { ...process.env, OUTSIDE_FIXTURE: outside },
+    });
+    expect(result.status).toBe(1);
+    expect(readFileSync(outside, "utf8")).toBe(sentinel);
+  } finally {
+    rmSync(f.root, { recursive: true, force: true });
+  }
+});

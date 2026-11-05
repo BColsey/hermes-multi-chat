@@ -4,14 +4,60 @@ import {
   writeFileSync,
   readdirSync,
   lstatSync,
+  constants,
+  openSync,
+  fstatSync,
+  closeSync,
+  ftruncateSync,
 } from "node:fs";
 import { dirname, join } from "node:path";
+
+if (typeof constants.O_NOFOLLOW !== "number")
+  throw new Error(
+    "Catalog builds require no-follow file opens on this platform.",
+  );
+function readRegular(path) {
+  const fd = openSync(
+    path,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
+  try {
+    if (!fstatSync(fd).isFile())
+      throw new Error(`Not a regular catalog input: ${path}`);
+    return readFileSync(fd);
+  } finally {
+    closeSync(fd);
+  }
+}
+
+function writeRegular(path, data) {
+  const fd = openSync(
+    path,
+    constants.O_WRONLY |
+      constants.O_CREAT |
+      constants.O_NOFOLLOW |
+      constants.O_NONBLOCK,
+    0o644,
+  );
+  try {
+    if (!fstatSync(fd).isFile())
+      throw new Error(`Not a regular catalog output: ${path}`);
+    ftruncateSync(fd, 0);
+    writeFileSync(fd, data);
+  } finally {
+    closeSync(fd);
+  }
+}
 
 const check = process.argv.slice(2).includes("--check");
 if (process.argv.slice(2).some((arg) => arg !== "--check"))
   throw new Error("Usage: node scripts/catalog.mjs [--check]");
-const version = JSON.parse(readFileSync("package.json", "utf8")).version;
-const manifest = JSON.parse(readFileSync("dashboard/manifest.json", "utf8"));
+const version = JSON.parse(
+  readRegular("package.json").toString("utf8"),
+).version;
+const manifest = JSON.parse(
+  readRegular("dashboard/manifest.json").toString("utf8"),
+);
 if (
   !/^\d+\.\d+\.\d+$/.test(version) ||
   manifest.version !== version ||
@@ -34,10 +80,10 @@ const runtime = [
 const outputs = new Map(
   runtime.map((path) => [
     "catalog/dashboard/" + path,
-    readFileSync("dashboard/" + path),
+    readRegular("dashboard/" + path),
   ]),
 );
-outputs.set("catalog/LICENSE", readFileSync("LICENSE"));
+outputs.set("catalog/LICENSE", readRegular("LICENSE"));
 outputs.set(
   "catalog/plugin.yaml",
   Buffer.from(`manifest_version: 1
@@ -75,12 +121,11 @@ for (const path of files("catalog"))
 if (!check)
   for (const [path, data] of outputs) {
     mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, data);
+    writeRegular(path, data);
   }
 for (const path of expected) {
-  if (!lstatSync(path).isFile())
-    throw new Error(`Missing regular catalog file: ${path}`);
-  if (outputs.has(path) && !readFileSync(path).equals(outputs.get(path)))
+  const data = readRegular(path);
+  if (outputs.has(path) && !data.equals(outputs.get(path)))
     throw new Error(`Stale catalog file: ${path}; run npm run catalog.`);
 }
 console.log(
