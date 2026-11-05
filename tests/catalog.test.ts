@@ -7,6 +7,7 @@ import {
   writeFileSync,
   rmSync,
   readdirSync,
+  statSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -187,3 +188,33 @@ for (const kind of ["read", "write", "parent"] as const)
       rmSync(f.root, { recursive: true, force: true });
     }
   });
+
+test("new generated files and directories stay private with a permissive caller umask", () => {
+  const f = fixture();
+  try {
+    const result = spawnSync(
+      "python3",
+      [
+        "-c",
+        "import os,runpy,sys; os.umask(0); p=sys.argv[1]; sys.argv=[p]; runpy.run_path(p,run_name='__main__')",
+        script,
+      ],
+      {
+        cwd: f.root,
+        encoding: "utf8",
+      },
+    );
+    expect(result.status).toBe(0);
+    expect
+      .soft(statSync(resolve(f.root, "catalog/dashboard/dist")).mode & 0o077)
+      .toBe(0);
+    expect
+      .soft(
+        statSync(resolve(f.root, "catalog/dashboard/dist/index.js")).mode &
+          0o077,
+      )
+      .toBe(0);
+  } finally {
+    rmSync(f.root, { recursive: true, force: true });
+  }
+});

@@ -16,7 +16,7 @@ def parent_fd(root, path, create=False):
         for name in parts[:-1]:
             if create:
                 try:
-                    os.mkdir(name, dir_fd=fd)
+                    os.mkdir(name, mode=0o700, dir_fd=fd)
                 except FileExistsError:
                     pass
             child = os.open(
@@ -33,7 +33,7 @@ def parent_fd(root, path, create=False):
 def regular_fd(root, path, write=False):
     with parent_fd(root, path, create=write) as (parent, name):
         flags = os.O_WRONLY | os.O_CREAT if write else os.O_RDONLY
-        fd = os.open(name, flags | os.O_NOFOLLOW | os.O_NONBLOCK, 0o644, dir_fd=parent)
+        fd = os.open(name, flags | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600, dir_fd=parent)
         try:
             if not stat.S_ISREG(os.fstat(fd).st_mode):
                 raise ValueError(f"Not a regular catalog file: {path}")

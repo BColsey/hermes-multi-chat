@@ -39,7 +39,8 @@
     ]
   },
   "checks": {
-    "typescript_unit": 42,
+    "typescript_unit": 43,
+    "new_generated_permissions": "owner-only directories/files even with caller umask 000; passed after a demonstrated failure",
     "catalog_file_swap_regressions": {
       "read": "passed; demonstrated failing before descriptor reads",
       "write": "passed; demonstrated outside-fixture overwrite before no-follow descriptor writes",
