@@ -104,7 +104,7 @@ Stop the disposable dashboard with Ctrl+C when finished. Inspect its child proce
 
 Disable traces/HAR/full-page log capture containing auth or sessions. Use only disposable public-demo directories and native non-sensitive TUI output for screenshots. Redact account usage/status, private paths and session metadata. Do not publish `.dev/`, login storage, error-context files, raw Playwright reports or full environment/config dumps.
 
-The committed [verification summary](../verification/0.1.1.json) is deliberately an aggregate, not a transcript or machine inventory. It separates a prior real-dashboard verification from the smaller GitHub CI suite.
+The committed [verification summary](../verification/0.2.0.json) is deliberately an aggregate, not a transcript or machine inventory. It separates a prior real-dashboard verification from the smaller GitHub CI suite.
 
 ## Source map
 

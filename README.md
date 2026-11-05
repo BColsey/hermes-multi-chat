@@ -4,11 +4,11 @@
 
 [![Checks](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml)
 [![Security](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml)
-[Download v0.1.1 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.1.1) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
+[Download v0.2.0 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.0) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
 
-Multi Chat adds a **two-pane or four-pane workspace** to the existing **Hermes Web Dashboard**. Each pane runs the real Hermes TUI in its own conversation and project. The normal Chat page stays exactly where it is.
+Multi Chat adds an **adjustable 1–16-pane workspace** to the existing **Hermes Web Dashboard**. Each pane runs the real Hermes TUI in its own conversation and project. The normal Chat page stays exactly where it is.
 
-![Four independent Hermes TUI conversations in Multi Chat](docs/media/four-panes.png)
+![Five independent Hermes TUI conversations in an adjustable Multi Chat layout](docs/media/five-panes.png)
 
 *Disposable demo projects with native TUI help output; no model responses. Account/session identifiers are masked.*
 
@@ -29,13 +29,13 @@ Run these commands **on the machine that runs Hermes**, as the same OS user. Pyt
 
 ```bash
 curl --fail --location --output install.py \
-  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.1.1/install.py
+  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.2.0/install.py
 
 python3 install.py install          # verify compatibility + checksum; preview only
 python3 install.py install --apply  # install and enable after you review the plan
 ```
 
-Then open **Hermes → Plugins → Rescan dashboard extensions**, reload the page, and choose **Multi Chat**. Pick an absolute project directory in each pane and start a conversation. Wait for the TUI's `ready` status **and the pane's session identity** before typing.
+Then open **Hermes → Plugins → Rescan dashboard extensions**, reload the page, and choose **Multi Chat**. Pick an absolute project directory in each pane and start a conversation. Wait for the pane's **connected** badge and the TUI's **ready** status before typing; an initial verification notice means input is not ready.
 
 The installer verifies the pinned release archive, changes only this plugin's consent, and never restarts a service or changes model/auth/tool settings. Downloading the installer is not the same as executing it: inspect it first if required by your security policy. Checksums detect corruption; they are not independent publisher signatures.
 
@@ -43,7 +43,9 @@ The installer verifies the pinned release archive, changes only this plugin's co
 
 ## Everyday use
 
-Choose **Two panes** or **Four panes**. Drag the separators—or Tab to them and use arrow keys. **Maximize** expands a pane; **Restore** brings back the previous layout. Alt+Shift+1–4 selects a pane.
+Choose any **Visible panes** count from **1 to 16**. The grid adapts automatically; new slots stay empty until you explicitly start/resume a conversation. Reducing the count hides extra views without disconnecting them. Drag separators—or Tab to them and use arrow keys. **Maximize** expands a pane; **Restore** brings back the layout. Alt+Shift+1–9 selects an existing pane.
+
+The backend's existing **16-terminal cap is shared** with other dashboard views; sixteen layout slots do not guarantee sixteen available PTYs. Saved two/four-pane layouts migrate without changing their conversation identities.
 
 Use the native `/model` picker, or `/model provider:model --session`, for a per-conversation model. Avoid `--global` unless you intentionally want a profile-wide change.
 
@@ -81,7 +83,7 @@ npm run typecheck && npm run lint && npm test
 npm run package
 ```
 
-See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.1.1.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
+See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.2.0.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
 
 ### Licensing
 

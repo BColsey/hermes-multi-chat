@@ -2,6 +2,15 @@
 
 [Docs](index.md) / Changelog
 
+## 0.2.0 — adjustable pane counts
+
+- Replace fixed two/four presets with a **1–16 visible-pane selector** and an automatic, resizable grid.
+- Keep existing terminal components and conversations connected when panes are hidden, revealed or maximized. New empty slots do not spawn agents.
+- Migrate legacy layouts without changing pane/channel/attachment identities; preserve hidden conversations and applicable split sizes.
+- Support Alt+Shift+1–9 for existing panes and keyboard/pointer resizing across multiple grid boundaries.
+- Report connection readiness only after identity verification; allow live identity revalidation without spuriously rejecting input from other panes' metadata updates. Pending input never crosses a socket/session change.
+- Preserve the existing shared 16-PTY limit and all execution/auth/model behavior. No backend/core patch is included.
+
 ## 0.1.1 — MIT licensing
 
 - License project code under MIT; preserve third-party notices.

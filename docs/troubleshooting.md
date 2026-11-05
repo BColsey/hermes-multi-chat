@@ -33,13 +33,13 @@ Run as the profile owner. A symlinked config/plugin path requires deliberate man
 
 ## Checksum or archive validation failed
 
-Download the installer, archive and `.sha256` file from the **same v0.1.1 release**. A local checksum must sit beside its archive and name that exact filename. Do not disable verification or edit a checksum to fit an unexpected download.
+Download the installer, archive and `.sha256` file from the **same v0.2.0 release**. A local checksum must sit beside its archive and name that exact filename. Do not disable verification or edit a checksum to fit an unexpected download.
 
 GitHub may be unavailable or blocked; use the [offline installation path](installation.md#custom-paths-and-an-offline-bundle). Checksums validate integrity, not a separate publisher identity.
 
 ## A pane is connected but not ready
 
-A socket connection can precede the TUI's startup. Wait for `ready` **and the pane's session ID**. Early input blocks the whole attempt to avoid turning a dropped slash prefix into a partial prompt. Wait for startup, use **Retry attachment**, then retype; do not use stale-reservation recovery for this. Confirm the chosen workspace exists on the **server** and the native Hermes TUI works there.
+A socket connection can precede the TUI's startup. Wait for the **connected** badge **and native TUI `ready`**. A prefilled resumed-session ID/title is not an attachment acknowledgement. Early input blocks the whole attempt to avoid turning a dropped slash prefix into a partial prompt. Wait for startup, use **Retry attachment**, then retype; do not use stale-reservation recovery for this. Confirm the chosen workspace exists on the **server** and the native Hermes TUI works there.
 
 If the initial acknowledgement is lost, the plugin may ask you to choose/resume again instead of retrying creation. Inspect recent sessions before explicitly starting another conversation. Prompts are not automatically replayed.
 
@@ -51,9 +51,15 @@ After a confirmed browser crash, **Recover stale reservation…** is available w
 
 Other browsers/devices and normal Chat/CLI do not share this browser reservation. See [ownership scope](compatibility.md#browser-ownership-boundary).
 
+## Reducing the pane count did not stop work
+
+**Visible panes** controls layout slots, not execution. Hidden connected views are retained and counted in the notice. Increase the count, or use an existing pane's Alt+Shift+1–9 shortcut, to reveal it. Use `/stop` inside the intended TUI if you want to interrupt its turn. The 16-slot selector does not increase the shared 16-PTY capacity.
+
 ## Refresh cannot find the retained terminal
 
 It may have exited, expired, been evicted or belonged to an old server process. The plugin refuses ordinary automatic recreation. Select a durable session explicitly to resume; do not assume a retained PTY lives indefinitely.
+
+If an outage also prevents the read-only HTTP identity check, attachment fails closed and may need **Retry attachment** after connectivity returns. Automatic PTY-socket reconnect is verified while that identity service remains available; automatic recovery from every whole-network outage is not guaranteed.
 
 This refusal is different from the [narrow non-atomic attachment race](compatibility.md#known-attachment-race), which remains documented.
 

@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "plugin": {
+    "name": "multi-chat",
+    "version": "0.2.0",
+    "license": "MIT",
+    "status": "experimental preview"
+  },
+  "hermes": {
+    "version": "0.22.6",
+    "commit": "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab",
+    "profile": "default",
+    "sdk": "1.1.0",
+    "isolation": "in_process"
+  },
+  "layout": {
+    "counts_tested": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "simultaneous_real_tui_conversations_tested": 5,
+    "maximum_columns": 4,
+    "backend_pty_capacity_changed": false,
+    "storage_schema": 2,
+    "legacy_schema_1_migration": "passed; IDs, targets, hidden views and applicable split proportions preserved"
+  },
+  "checks": {
+    "typecheck": "passed",
+    "frontend_lint_format": "passed",
+    "python_lint_format": "passed",
+    "typescript_unit": {
+      "passed": 35
+    },
+    "python_unit": {
+      "passed": 13
+    },
+    "real_hermes_config_writer_integration": {
+      "passed": 2,
+      "scope": "temporary synthetic profiles only"
+    },
+    "real_hermes_browser": {
+      "passed": 17,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "transport": "authenticated plain LAN HTTP; PTY-only disconnect/reconnect, plus pending-input discard on disconnect; whole-network identity-service outages can require manual retry",
+      "tests": [
+        {
+          "title": "all 1–16 pane counts, keyboard selection and multi-track splitters work without opening agents",
+          "passed": true
+        },
+        {
+          "title": "legacy migration and five live panes preserve identity through count changes, maximize and refresh",
+          "passed": true
+        },
+        {
+          "title": "native TUI resume into an already-viewed conversation blocks the second input path",
+          "passed": true
+        },
+        {
+          "title": "loss of the actual disposable PTY never becomes refresh permission to spawn another",
+          "passed": true
+        },
+        {
+          "title": "resume keeps workspace/title; native /new confirmation, identity and refresh stay correct",
+          "passed": true
+        },
+        {
+          "title": "model changes are session-scoped and do not write the profile default",
+          "passed": true
+        },
+        {
+          "title": "password gate, PTY ticket requirement and single-use SDK tickets remain enforced",
+          "passed": true
+        },
+        {
+          "title": "disabling and removing the plugin restore navigation; Normal Chat and history remain",
+          "passed": true
+        },
+        {
+          "title": "session-list refresh gates live input without rejecting or sending it before revalidation",
+          "passed": true
+        },
+        {
+          "title": "disconnect during identity revalidation discards all pending input",
+          "passed": true
+        },
+        {
+          "title": "two/four independent terminals, workspaces, slash input, resizing, maximize and close-view",
+          "passed": true
+        },
+        {
+          "title": "refresh and PTY socket reconnect preserve identity and do not replay user input",
+          "passed": true
+        },
+        {
+          "title": "duplicated tab with cloned sessionStorage and no Web Locks cannot take over",
+          "passed": true
+        },
+        {
+          "title": "existing session conflict focuses the original pane instead of a second writer",
+          "passed": true
+        },
+        {
+          "title": "narrow viewport remains keyboard-usable without horizontal overflow",
+          "passed": true
+        },
+        {
+          "title": "early input cannot lose its slash prefix and become a partial prompt",
+          "passed": true
+        },
+        {
+          "title": "late real workspace discovery does not write into an editing pane",
+          "passed": true
+        }
+      ]
+    },
+    "build": "passed",
+    "archive_checksums": "passed",
+    "two_build_reproducibility": "passed",
+    "packaged_vs_browser_tested_assets": "identical",
+    "runtime_dependency_audit": {
+      "vulnerabilities": 0
+    },
+    "all_npm_dependency_audit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 7,
+      "high": 0,
+      "critical": 0,
+      "total": 7
+    },
+    "python_requirements_audit": "no known vulnerabilities",
+    "sbom_schema": "CycloneDX 1.5 passed"
+  },
+  "toolchain": {
+    "node": "v22.23.2",
+    "playwright": "1.58.2",
+    "chromium": "145.0.7632.6",
+    "ruff": "0.15.22"
+  },
+  "artifact": {
+    "filename": "multi-chat-0.2.0.tar.gz",
+    "sha256": "c0e1ff905a8841489b364bbca78cdf53c5759e02d3b9f7a0c5eb1a1cc50929f1",
+    "installer_sha256": "e0d1d697c20cd9772e84f606724ef8b5d653b3f96c378545c872838e2ddbe92b"
+  },
+  "not_verified": [
+    "16 simultaneous active model/tool sessions or multi-pane load benchmarks",
+    "actual model inference/streaming and model-driven tool/approval/clarification flows",
+    "long-running work and a 30-minute retention soak",
+    "Firefox/Safari and real mobile IME/OS clipboard behavior",
+    "production deployment",
+    "atomic attach-only behavior (unsupported core capability)"
+  ],
+  "privacy": {
+    "contents": "aggregate public verification only; no credentials, private host/path data or transcripts",
+    "screenshots": "disposable demo paths and native help, with account/session identifiers masked"
+  },
+  "production_installation_performed": false,
+  "core_changes_by_plugin": false
+}

@@ -21,7 +21,9 @@ Do not downgrade/patch a working Hermes installation just to bypass this guard. 
 
 ## What was verified
 
-The [release verification summary](../verification/0.1.1.json) records checks without private credentials, machine paths or transcripts. v0.1.1 changes licensing/version metadata only: runtime/backend bytes match v0.1.0, whose [browser verification](../verification/0.1.0.json) remains the basis; those browser tests were not rerun for this notice-only release.
+The [v0.2.0 verification summary](../verification/0.2.0.json) records checks without private credentials, machine paths or transcripts. The real-dashboard suite was rerun for the adjustable-layout change.
+
+All 1–16 empty layout counts and five simultaneous real TUI conversations were tested. Sixteen active model/tool sessions were not load-tested; the existing 16-PTY capacity remains shared with other views.
 
 - Frontend typecheck, lint, unit tests, local bundle build and runtime dependency audit.
 - Read-only adapter validation and retained/not-retained behavior with synthetic registries.
@@ -51,7 +53,7 @@ These are the inspected build's behavior, not limits increased by this plugin. S
 - Actual model inference/streaming, model-driven tool execution and approval/clarification paths end to end.
 - Long-running model work and a 30-minute idle/retention soak.
 - Firefox, Safari and real mobile-device IME/OS clipboard permissions.
-- Four-pane model/tool memory use, throughput or performance under load.
+- Multi-pane model/tool memory use, throughput or performance under load, including sixteen simultaneously active agents.
 - Arbitrary providers, named profiles, plugin-host isolation or future Hermes builds.
 
 Native TUI paths remain in place, but preserving a path is not the same as testing it. No permissions, authentication policies, model defaults or production resource limits are changed to compensate.

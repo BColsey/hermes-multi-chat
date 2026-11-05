@@ -7,7 +7,7 @@ Open **Multi Chat** at `/multi-chat` after [installation](installation.md). Norm
 ## Start or resume
 
 1. In an empty pane, choose an absolute **host** workspace path from its suggestions or type one. Workspace discovery never fills or changes a field you are editing. `cwd` is sent explicitly for a new conversation and validated by Hermes.
-2. Click **Start new conversation**. Wait for the real TUI's `ready` status and for “Waiting for session identity…” to become an ID before typing. A connected WebSocket is not necessarily a finished TUI bootstrap. If input arrives before verification, the view blocks the whole attempt instead of forwarding a partial draft; wait, click **Retry attachment**, and retype explicitly.
+2. Click **Start new conversation**. Wait for the pane's **connected** badge and the real TUI's **ready** status before typing. “Verifying terminal identity” means input is not ready; a resumed session can already have a prefilled ID/title before its actual attachment is verified. A verified socket is not necessarily a finished TUI bootstrap. If input arrives before verification, the view blocks the whole attempt instead of forwarding a partial draft; wait, click **Retry attachment**, and retype explicitly.
 3. For existing work, choose a conversation or enter its exact ID and click **Resume conversation**. Its original workspace is preserved; the fresh-workspace field is not sent on resume.
 
 Recent conversations are limited to 100 in the list; older IDs can still be entered directly. The plugin follows the backend's latest compression descendant. The displayed title, workspace, model and durable session ID come from the current conversation, not another pane's default preference. `/title` requires a unique title in this Hermes build.
@@ -18,20 +18,25 @@ Different conversations editing the same checkout are still a repository concurr
 
 ## Layout and focus
 
-- **Two panes** / **Four panes** change the grid without recreating terminal components.
+- Choose **Visible panes: 1–16**. This changes layout slots, not the number of agents: a new slot stays empty until you explicitly start/resume a conversation.
+- The grid adapts up to four columns, with additional rows and vertical scrolling. Lower counts hide extra panes without disconnecting them; increasing the count reveals their existing views again.
 - Drag the vertical/horizontal splitters. Keyboard: Tab to a splitter, arrow keys to resize, Home/End for the supported limits.
 - **Maximize** one pane; **Restore** returns the previous sizes and layout.
-- The focused pane has a distinct border and numbered badge. Alt+Shift+1–4 selects a pane; its focus button moves into the terminal.
+- The focused pane has a distinct border and numbered badge. Alt+Shift+1–9 selects an existing pane among the first nine, revealing it if hidden. Every pane, including 10–16, is reachable with Tab and its focus button.
 - At narrower widths panes stack vertically and the page scrolls. Hidden panes remain connected; the notice states how many. Hiding a pane is not stopping it.
 
 <details>
 <summary>See two-pane and narrow-screen examples</summary>
+
+![Five independent native Hermes TUI panes](media/five-panes.png)
 
 ![Two native Hermes TUI panes](media/two-panes.png)
 
 ![Multi Chat stacked on a narrow viewport](media/narrow-viewport.png)
 
 </details>
+
+Existing two/four-pane layouts migrate automatically, preserving all selected/hidden conversations, identities and two-track split sizes. Split proportions are reused when their track count matches; otherwise the new grid starts evenly divided. Maximizing does not alter saved splits.
 
 Layout, selected sessions and attachment identities are stored in this tab's session storage. Transient reconnects and refresh reuse the observed retained PTY. Nothing retypes a prompt. The plugin makes a single creation attempt for an explicit new/resume action; if that attempt's acknowledgement is lost, or the retained terminal is gone, it stops and asks for an explicit selection instead of guessing or spawning replacement work.
 
@@ -72,6 +77,6 @@ The browser can coordinate its own origin, not a separate browser/device or a no
 
 ## Resource implications
 
-Four panes mean four real Node TUI processes and four session contexts, plus configured tool containers and model/quota usage when work is submitted. No production CPU/RAM/session limit is increased. The plugin uses the DOM xterm renderer, 3,000 lines of local scrollback per terminal, two authenticated sockets per connected pane, one read-only registry observation per second per pane, and additional observations before human input. Only the focused input path normally incurs those extra checks. Full model/tool memory and throughput were not benchmarked.
+Each started pane means a real Node TUI process and session context, plus configured tool containers and model/quota usage when work is submitted. Empty slots do not spawn agents. The 16-slot UI limit does not reserve or increase the existing shared 16-PTY backend capacity; normal Chat and other views may use some of it. No production CPU/RAM/session limit is increased. The plugin uses the DOM xterm renderer, 3,000 lines of local scrollback per terminal, two authenticated sockets per connected pane, one read-only registry observation per second per pane, and additional observations before human input. Only the focused input path normally incurs those extra checks. Full model/tool memory and throughput were not benchmarked.
 
 Return to the [documentation index](index.md); see [contracts](contracts.md) and [development verification](development.md).

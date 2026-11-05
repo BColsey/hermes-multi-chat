@@ -123,7 +123,7 @@ test("two/four independent terminals, workspaces, slash input, resizing, maximiz
     /help|commands/i,
   );
   await shot(page, "two-panes");
-  await page.getByRole("button", { name: "Four panes", exact: true }).click();
+  await page.getByLabel("Visible panes", { exact: true }).selectOption("4");
   await start(page, 3, "c");
   await start(page, 4, "d");
   expect(
@@ -134,14 +134,19 @@ test("two/four independent terminals, workspaces, slash input, resizing, maximiz
     ).size,
   ).toBe(4);
   const connectedSocketCount = ptys.length;
-  await page.getByRole("button", { name: "Two panes", exact: true }).click();
+  await page.getByLabel("Visible panes", { exact: true }).selectOption("2");
   await expect(pane(page, 3)).toBeHidden();
+  await page.getByLabel("Visible panes", { exact: true }).focus();
   await page.keyboard.press("Alt+Shift+Digit3");
   await expect(pane(page, 3)).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Focus pane 3", exact: true }),
   ).toBeFocused();
   expect(ptys).toHaveLength(connectedSocketCount);
+  await expect(page.getByLabel("Visible panes", { exact: true })).toHaveValue(
+    "3",
+  );
+  await page.getByLabel("Visible panes", { exact: true }).selectOption("4");
   const terminals = await page
     .locator(".mc-terminal .xterm")
     .evaluateAll((nodes) => {
@@ -192,7 +197,7 @@ test("two/four independent terminals, workspaces, slash input, resizing, maximiz
   await end(page, [1, 2, 3, 4]);
 });
 
-test("refresh and transient reconnect preserve identity and do not replay user input", async ({
+test("refresh and PTY socket reconnect preserve identity and do not replay user input", async ({
   page,
   context,
 }) => {
@@ -232,13 +237,13 @@ test("refresh and transient reconnect preserve identity and do not replay user i
   await command(page, 1, "/help");
   const id = await pane(page, 1).getAttribute("data-session");
   const baselineSockets = ptys.length;
-  await context.setOffline(true);
+  // Keep identity inspection online: losing HTTP verification intentionally
+  // fails closed and may require manual reattachment, unlike a PTY-only drop.
   await page.evaluate(() =>
     (window as unknown as { mcTestSockets: WebSocket[] }).mcTestSockets
       .at(-1)!
       .close(),
   );
-  await context.setOffline(false);
   await expect.poll(() => ptys.length).toBe(baselineSockets + 1);
   await expect(pane(page, 1)).toHaveAttribute("data-connection", "connected");
   await page.reload();
@@ -338,7 +343,7 @@ test("narrow viewport remains keyboard-usable without horizontal overflow", asyn
 }) => {
   await page.setViewportSize({ width: 430, height: 900 });
   await page.goto("/multi-chat");
-  await page.getByRole("button", { name: "Four panes", exact: true }).click();
+  await page.getByLabel("Visible panes", { exact: true }).selectOption("4");
   await expect(pane(page, 4)).toBeVisible();
   expect(
     await page

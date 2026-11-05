@@ -22,8 +22,9 @@ test("early input cannot lose its slash prefix and become a partial prompt", asy
   await pane
     .getByRole("button", { name: "Start new conversation", exact: true })
     .click();
-  await expect(pane).toHaveAttribute("data-connection", "connected");
+  await expect(pane).toHaveAttribute("data-connection", "connecting");
   await expect(pane.locator(".xterm-rows")).toContainText(/ready[ │]/i);
+  await expect(pane).toContainText("Verifying terminal identity");
   await expect.poll(() => sessionId).not.toBe("");
   await pane.getByLabel("Hermes terminal input", { exact: true }).press("/");
   await expect(pane).toContainText(

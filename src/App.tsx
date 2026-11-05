@@ -1,6 +1,11 @@
 import { React, sdk, type SessionRow, type WorkspaceData } from "./sdk";
 import {
-  clamp,
+  MAX_PANES,
+  changePaneCount,
+  focusPane,
+  paneGrid,
+  splitPositions,
+  splitBounds,
   existingPane,
   paneHotkey,
   newTarget,
@@ -14,6 +19,19 @@ import {
   type TerminalControls,
 } from "./TerminalHost";
 import type { ConnectionState, SessionMetadata } from "./transport";
+import type { CSSProperties } from "react";
+
+const SPLITTER_SIZE = 9;
+function gridTemplate(positions: number[]): string {
+  let start = 0;
+  return [...positions, 100]
+    .map((end) => {
+      const size = end - start;
+      start = end;
+      return `minmax(0, ${size}fr)`;
+    })
+    .join(` ${SPLITTER_SIZE}px `);
+}
 
 const STORAGE_KEY = "hermes.multi-chat.default.v1";
 const RESTORE_WINDOW = 29 * 60 * 1000;
@@ -38,6 +56,7 @@ function restore(): Layout {
 interface PaneProps {
   pane: Pane;
   index: number;
+  gridColumns: number;
   focused: boolean;
   maximized: boolean;
   hidden: boolean;
@@ -127,7 +146,7 @@ function ChatPane(props: PaneProps) {
       className={`mc-pane ${props.focused ? "mc-focused" : ""}`}
       hidden={props.hidden}
       style={{
-        gridArea: `${Math.floor(props.index / 2) + 1} / ${(props.index % 2) + 1}`,
+        gridArea: `${Math.floor(props.index / props.gridColumns) * 2 + 1} / ${(props.index % props.gridColumns) * 2 + 1}`,
       }}
       aria-label={`Chat pane ${props.index + 1}`}
       data-pane={props.index + 1}
@@ -376,24 +395,33 @@ function ChatPane(props: PaneProps) {
 
 interface SplitterProps {
   orientation: "vertical" | "horizontal";
-  value: number;
+  positions: number[];
+  index: number;
   change(value: number): void;
 }
 function Splitter(props: SplitterProps) {
   const vertical = props.orientation === "vertical";
+  const value = props.positions[props.index];
+  const { min, max } = splitBounds(props.positions, props.index);
+  const change = (next: number) =>
+    props.change(Math.max(min, Math.min(max, next)));
   return (
     <div
       className={`mc-splitter mc-splitter-${props.orientation}`}
       role="separator"
-      aria-label={vertical ? "Resize columns" : "Resize rows"}
-      aria-orientation={props.orientation}
-      aria-valuemin={20}
-      aria-valuemax={80}
-      aria-valuenow={Math.round(props.value)}
-      tabIndex={0}
-      style={
-        vertical ? { left: props.value + "%" } : { top: props.value + "%" }
+      aria-label={
+        (vertical ? "Resize columns" : "Resize rows") +
+        (props.positions.length > 1 ? ` ${props.index + 1}` : "")
       }
+      aria-orientation={props.orientation}
+      aria-valuemin={Number(min.toFixed(2))}
+      aria-valuemax={Number(max.toFixed(2))}
+      aria-valuenow={Number(value.toFixed(2))}
+      tabIndex={0}
+      style={{
+        gridColumn: vertical ? (props.index + 1) * 2 : "1 / -1",
+        gridRow: vertical ? "1 / -1" : (props.index + 1) * 2,
+      }}
       onKeyDown={(e) => {
         const delta =
           e.key === (vertical ? "ArrowRight" : "ArrowDown")
@@ -403,12 +431,8 @@ function Splitter(props: SplitterProps) {
               : 0;
         if (delta || ["Home", "End"].includes(e.key)) {
           e.preventDefault();
-          props.change(
-            e.key === "Home"
-              ? 20
-              : e.key === "End"
-                ? 80
-                : clamp(props.value + delta),
+          change(
+            e.key === "Home" ? min : e.key === "End" ? max : value + delta,
           );
         }
       }}
@@ -419,13 +443,14 @@ function Splitter(props: SplitterProps) {
       onPointerMove={(e) => {
         if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
         const box = e.currentTarget.parentElement!.getBoundingClientRect();
-        props.change(
-          clamp(
-            (vertical
-              ? (e.clientX - box.left) / box.width
-              : (e.clientY - box.top) / box.height) * 100,
-          ),
-        );
+        const offset = vertical ? e.clientX - box.left : e.clientY - box.top;
+        const available =
+          (vertical ? box.width : box.height) -
+          SPLITTER_SIZE * props.positions.length;
+        if (available > 0)
+          change(
+            ((offset - SPLITTER_SIZE * (props.index + 0.5)) / available) * 100,
+          );
       }}
       onPointerUp={(e) => {
         if (e.currentTarget.hasPointerCapture(e.pointerId))
@@ -508,13 +533,22 @@ export function MultiChat() {
       ...l,
       panes: l.panes.map((p) => (p.id === id ? { ...p, ...patch } : p)),
     }));
-  const focus = (id: string) =>
-    setLayout((l) => ({
-      ...l,
-      focused: id,
-      count: l.panes.findIndex((p) => p.id === id) > 1 ? 4 : l.count,
-      maximized: l.maximized && l.maximized !== id ? null : l.maximized,
-    }));
+  const focus = (id: string) => setLayout((l) => focusPane(l, id));
+  const resizeSplit = (
+    axis: "columns" | "rows",
+    index: number,
+    value: number,
+  ) =>
+    setLayout((l) => {
+      const positions = splitPositions(l[axis], paneGrid(l.count)[axis]);
+      const { min, max } = splitBounds(positions, index);
+      return {
+        ...l,
+        [axis]: positions.map((p, i) =>
+          i === index ? Math.max(min, Math.min(max, value)) : p,
+        ),
+      };
+    });
   const resume = async (pane: Pane, sessionId: string) => {
     const lineage = await sdk.fetchJSON<{ session_id: string; path: string[] }>(
       `/api/sessions/${encodeURIComponent(sessionId)}/latest-descendant?profile=default`,
@@ -556,15 +590,17 @@ export function MultiChat() {
     (p, i) =>
       p.target &&
       !p.detached &&
-      ((layout.count === 2 && i > 1) ||
-        (layout.maximized && layout.maximized !== p.id)),
+      (i >= layout.count || (layout.maximized && layout.maximized !== p.id)),
   ).length;
+  const grid = paneGrid(layout.count);
+  const columns = splitPositions(layout.columns, grid.columns);
+  const rows = splitPositions(layout.rows, grid.rows);
   return (
     <div
       className="mc-root"
       onKeyDown={(e) => {
         const index = paneHotkey(e);
-        if (index !== null) {
+        if (index !== null && layout.panes[index]) {
           e.preventDefault();
           focus(layout.panes[index].id);
           requestAnimationFrame(() =>
@@ -583,29 +619,26 @@ export function MultiChat() {
           <p>Independent Hermes terminals · default profile</p>
         </div>
         <div className="mc-actions">
-          <button
-            aria-pressed={layout.count === 2}
-            onClick={() =>
-              setLayout((l) => ({
-                ...l,
-                count: 2,
-                maximized: null,
-                focused: l.panes.slice(0, 2).some((p) => p.id === l.focused)
-                  ? l.focused
-                  : l.panes[0].id,
-              }))
-            }
-          >
-            Two panes
-          </button>
-          <button
-            aria-pressed={layout.count === 4}
-            onClick={() =>
-              setLayout((l) => ({ ...l, count: 4, maximized: null }))
-            }
-          >
-            Four panes
-          </button>
+          <label className="mc-count-label">
+            Visible panes
+            <select
+              aria-label="Visible panes"
+              aria-describedby="mc-pane-count-help"
+              value={layout.count}
+              onChange={(e) =>
+                setLayout((l) => changePaneCount(l, Number(e.target.value)))
+              }
+            >
+              {Array.from({ length: MAX_PANES }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+          </label>
+          <span id="mc-pane-count-help" className="mc-count-help">
+            Hiding panes does not stop work.
+          </span>
           {layout.maximized && (
             <button
               onClick={() => setLayout((l) => ({ ...l, maximized: null }))}
@@ -624,10 +657,10 @@ export function MultiChat() {
           approval/clarification dialogs are the real Hermes TUI.
         </p>
         <p>
-          Use Alt+Shift+1–4 to select a pane; Tab reaches toolbar controls. Drag
-          splitters or use their arrow keys. Paste through the terminal's native
-          browser paste; Copy selection uses a user-gesture fallback on LAN
-          HTTP. Browser clipboard restrictions still apply.
+          Use Alt+Shift+1–9 to select an existing pane; Tab reaches every pane's
+          controls. Drag splitters or use their arrow keys. Paste through the
+          terminal's native browser paste; Copy selection uses a user-gesture
+          fallback on LAN HTTP. Browser clipboard restrictions still apply.
         </p>
         <p>
           Close view detaches; it does not stop work. Type <code>/stop</code> to
@@ -663,26 +696,27 @@ export function MultiChat() {
         </div>
       )}
       <div
-        className={`mc-grid mc-count-${layout.count} ${layout.maximized ? "mc-maximized" : ""}`}
-        style={{
-          gridTemplateColumns: `${layout.columns}fr ${100 - layout.columns}fr`,
-          gridTemplateRows:
-            layout.count === 4
-              ? `${layout.rows}fr ${100 - layout.rows}fr`
-              : "1fr",
-        }}
+        className={`mc-grid ${layout.maximized ? "mc-maximized" : ""}`}
+        style={
+          {
+            gridTemplateColumns: gridTemplate(layout.maximized ? [] : columns),
+            gridTemplateRows: gridTemplate(layout.maximized ? [] : rows),
+            "--mc-grid-rows": layout.maximized ? 1 : grid.rows,
+          } as CSSProperties
+        }
       >
         {layout.panes.map((pane, index) => (
           <ChatPane
             key={pane.id}
             pane={pane}
             index={index}
+            gridColumns={grid.columns}
             focused={layout.focused === pane.id}
             maximized={layout.maximized === pane.id}
             hidden={
               layout.maximized
                 ? layout.maximized !== pane.id
-                : layout.count === 2 && index > 1
+                : index >= layout.count
             }
             workspaces={workspaces}
             sessions={sessions}
@@ -712,18 +746,24 @@ export function MultiChat() {
         ))}
         {!layout.maximized && (
           <>
-            <Splitter
-              orientation="vertical"
-              value={layout.columns}
-              change={(columns) => setLayout((l) => ({ ...l, columns }))}
-            />
-            {layout.count === 4 && (
+            {columns.map((_, index) => (
               <Splitter
-                orientation="horizontal"
-                value={layout.rows}
-                change={(rows) => setLayout((l) => ({ ...l, rows }))}
+                key={`column-${index}`}
+                orientation="vertical"
+                positions={columns}
+                index={index}
+                change={(value) => resizeSplit("columns", index, value)}
               />
-            )}
+            ))}
+            {rows.map((_, index) => (
+              <Splitter
+                key={`row-${index}`}
+                orientation="horizontal"
+                positions={rows}
+                index={index}
+                change={(value) => resizeSplit("rows", index, value)}
+              />
+            ))}
           </>
         )}
       </div>

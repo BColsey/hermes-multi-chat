@@ -59,6 +59,7 @@ export function TerminalHost(props: Props) {
   React.useEffect(() => {
     let cancelled = false;
     let verified = false;
+    let connected = false;
     let firstInfo = true;
     let observedLiving = false;
     let metadataId = "";
@@ -67,6 +68,16 @@ export function TerminalHost(props: Props) {
     let poll: ReturnType<typeof setInterval> | undefined;
     let syncFlight: Promise<void> | undefined;
     let inputFlight = Promise.resolve();
+    const setVerified = (value: boolean) => {
+      verified = value;
+      if (!cancelled && connected && !connection?.isStopped)
+        callbacks.current.onState(
+          value ? "connected" : "connecting",
+          value
+            ? "Connected"
+            : "Verifying terminal identity — input is not ready yet.",
+        );
+    };
     const claimed = new Set<string>();
     const term = new Terminal({
       fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
@@ -163,7 +174,7 @@ export function TerminalHost(props: Props) {
     ) => {
       if (cancelled) return;
       if (metadataId === sessionId && !refreshDetails) {
-        verified = true;
+        setVerified(true);
         return;
       }
       if (
@@ -188,7 +199,7 @@ export function TerminalHost(props: Props) {
         return;
       }
       if (conflict) {
-        verified = false;
+        setVerified(false);
         connection?.block(
           "This conversation is already selected in another pane or tab. This view will not send input.",
         );
@@ -211,7 +222,7 @@ export function TerminalHost(props: Props) {
         }
       firstInfo = false;
       metadataId = sessionId;
-      verified = true;
+      setVerified(true);
       callbacks.current.onMetadata({
         sessionId,
         workspace: row.cwd || props.pane.workspace,
@@ -226,7 +237,7 @@ export function TerminalHost(props: Props) {
         const state = await api.read();
         if (cancelled || connection?.isStopped) return;
         if (!state.retained) {
-          verified = false;
+          setVerified(false);
           if (observedLiving)
             connection?.block(
               "The retained terminal is gone. No replacement was spawned. Close this view and explicitly resume its saved conversation.",
@@ -236,9 +247,10 @@ export function TerminalHost(props: Props) {
         observedLiving = true;
         if (state.session_id)
           await acceptIdentity(state.session_id, refreshDetails);
+        else setVerified(false);
       })()
         .catch(() => {
-          verified = false;
+          setVerified(false);
           if (!cancelled)
             connection?.block(
               "Read-only terminal identity verification failed. No input will be sent. Check plugin compatibility and sign-in, then reattach.",
@@ -261,7 +273,11 @@ export function TerminalHost(props: Props) {
       }
       // Do not drop only the prefix of a draft and admit its remaining bytes
       // when verification finishes mid-typing. Reject the whole attempt instead.
-      if (!verified && connection && !connection.isStopped) {
+      if (
+        (!verified || !connected || !navigator.onLine) &&
+        connection &&
+        !connection.isStopped
+      ) {
         connection.block(
           "Input arrived before session identity was verified. Nothing was submitted. Wait for startup, then Retry attachment and retype.",
         );
@@ -269,17 +285,32 @@ export function TerminalHost(props: Props) {
       }
       if (!verified || !connection || connection.isStopped) return;
       const epoch = connection.epoch;
+      const sessionAtInput = metadataId;
       // Recheck the channel marker before forwarding human input: /new and
       // /resume are handled by the real TUI, not a second composer/parser.
       // Work admitted against an old socket epoch is discarded, never replayed.
       inputFlight = inputFlight
         .then(async () => {
           await synchronize();
-          if (cancelled || !verified || connection?.epoch !== epoch) return;
-          connection.send(data);
+          if (cancelled || !connection || connection.isStopped) return;
+          if (
+            !verified ||
+            !connected ||
+            connection.epoch !== epoch ||
+            metadataId !== sessionAtInput
+          ) {
+            connection.block(
+              "Terminal identity or connection changed while checking input. Nothing was replayed. Retry attachment and retype explicitly.",
+            );
+            return;
+          }
+          if (!connection.send(data))
+            connection.block(
+              "Terminal disconnected before input could be sent. Nothing was replayed. Retry attachment and retype explicitly.",
+            );
         })
         .catch(() => {
-          verified = false;
+          setVerified(false);
         });
     });
     const start = async () => {
@@ -317,14 +348,22 @@ export function TerminalHost(props: Props) {
             term.write(data);
           },
           state: (state, detail) => {
-            if (state !== "connected") verified = false;
-            if (!cancelled) callbacks.current.onState(state, detail);
+            connected = state === "connected";
+            if (!connected) verified = false;
+            if (!cancelled)
+              callbacks.current.onState(
+                connected && !verified ? "connecting" : state,
+                connected && !verified
+                  ? "Verifying terminal identity — input is not ready yet."
+                  : detail,
+              );
           },
           info: async () => {
             await synchronize(true);
           },
           inventoryChanged: () => {
-            verified = false;
+            // Live keystrokes already await this check; unrelated session-list
+            // updates must not masquerade as an unverified initial attachment.
             void synchronize(true);
           },
         });
