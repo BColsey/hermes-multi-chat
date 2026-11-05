@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { test, expect } from "./fixtures";
+import { test, expect, chooseWorkspace } from "./fixtures";
 import { readFile, rename } from "node:fs/promises";
 import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "../..");
@@ -19,9 +19,7 @@ async function cmd(page: Page, i: number, text: string) {
     await expect(pane(page, i).locator(".xterm-rows")).toContainText("Ctrl+W");
 }
 async function start(page: Page, i: number, letter: string) {
-  await pane(page, i)
-    .getByLabel(`Workspace for pane ${i}`, { exact: true })
-    .fill(resolve(root, ".dev/project-" + letter));
+  await chooseWorkspace(page, i, resolve(root, ".dev/project-" + letter));
   await pane(page, i)
     .getByRole("button", { name: "Start new conversation", exact: true })
     .click();
@@ -47,9 +45,7 @@ test("resume keeps workspace/title; native /new confirmation, identity and refre
   await pane(page, 1)
     .getByRole("button", { name: "Choose another conversation", exact: true })
     .click();
-  await pane(page, 2)
-    .getByLabel("Workspace for pane 2", { exact: true })
-    .fill(resolve(root, ".dev/project-b"));
+  await chooseWorkspace(page, 2, resolve(root, ".dev/project-b"));
   await pane(page, 2)
     .getByLabel("Session ID for pane 2", { exact: true })
     .fill(original!);

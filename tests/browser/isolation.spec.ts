@@ -1,13 +1,11 @@
 import type { Page } from "@playwright/test";
-import { test, expect } from "./fixtures";
+import { test, expect, chooseWorkspace } from "./fixtures";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "../..");
 const pane = (page: Page, i: number) => page.locator(`[data-pane="${i}"]`);
 async function start(page: Page, i: number, letter: string) {
-  await pane(page, i)
-    .getByLabel(`Workspace for pane ${i}`, { exact: true })
-    .fill(resolve(root, ".dev/project-" + letter));
+  await chooseWorkspace(page, i, resolve(root, ".dev/project-" + letter));
   await pane(page, i)
     .getByRole("button", { name: "Start new conversation", exact: true })
     .click();

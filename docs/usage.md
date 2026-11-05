@@ -6,9 +6,9 @@ Open **Multi Chat** at `/multi-chat` after [installation](installation.md). Norm
 
 ## Start or resume
 
-1. In an empty pane, choose an absolute **host** workspace path from its suggestions or type one. Workspace discovery never fills or changes a field you are editing. `cwd` is sent explicitly for a new conversation and validated by Hermes.
+1. In an empty pane, choose a project from the **Project for a new conversation** dropdown. It lists non-archived Hermes project folders, discovered repositories and the dashboard starting directory, with names and absolute server paths. Choose **Other folder…** to enter a folder not listed. These are existing folders on your **Hermes server**, not new copies or sandboxes. Loading the list never overwrites your choice or manual input. `cwd` is sent explicitly for a new conversation and validated by Hermes.
 2. Click **Start new conversation**. Wait for the pane's **connected** badge and the real TUI's **ready** status before typing. “Verifying terminal identity” means input is not ready; a resumed session can already have a prefilled ID/title before its actual attachment is verified. A verified socket is not necessarily a finished TUI bootstrap. If input arrives before verification, the view blocks the whole attempt instead of forwarding a partial draft; wait, click **Retry attachment**, and retype explicitly.
-3. For existing work, choose a conversation or enter its exact ID and click **Resume conversation**. Its original workspace is preserved; the fresh-workspace field is not sent on resume.
+3. For existing work, choose a conversation or enter its exact ID and click **Resume conversation**. Its original workspace is preserved; the new-project selection is not sent on resume.
 
 Recent conversations are limited to 100 in the list; older IDs can still be entered directly. The plugin follows the backend's latest compression descendant. The displayed title, workspace, model and durable session ID come from the current conversation, not another pane's default preference. `/title` requires a unique title in this Hermes build.
 

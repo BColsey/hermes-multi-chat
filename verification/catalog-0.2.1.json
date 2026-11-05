@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "plugin": {
+    "name": "multi-chat",
+    "version": "0.2.1",
+    "license": "MIT",
+    "status": "experimental catalog review candidate; not an admission claim"
+  },
+  "hermes": {
+    "version": "0.22.6",
+    "commit": "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab",
+    "profile": "default",
+    "sdk": "1.1.0",
+    "isolation": "in_process"
+  },
+  "package": {
+    "subdir": "catalog",
+    "file_sha256": {
+      "LICENSE": "7fd00bd8aada21a3008520ad06826030834a18426a0dbfd92148164694ac941c",
+      "README.md": "b236154a9950d1cc6d91c184a779a3a4a650398ac448405f3d4c7ff02ada32cf",
+      "__init__.py": "5ed07b6bf63e1d6e9105b4c16342725f1401cce72ef75dcd44d4c2090a87e1e3",
+      "dashboard/dist/index.js": "34f7b0f9d17a1b806eb34657b2b90cc35ba98e6eec825743aa2d09a0df0cc6f1",
+      "dashboard/dist/licenses/addon-fit.txt": "e256f01188af527e4d06d21d06fbf785ae9c50d4b328bf03cbe0ba7f0aa4228f",
+      "dashboard/dist/licenses/addon-unicode11.txt": "e256f01188af527e4d06d21d06fbf785ae9c50d4b328bf03cbe0ba7f0aa4228f",
+      "dashboard/dist/licenses/multi-chat.txt": "7fd00bd8aada21a3008520ad06826030834a18426a0dbfd92148164694ac941c",
+      "dashboard/dist/licenses/xterm.txt": "b569f629d00f2626a8100df2a1798210535621e42164dfd426a6fe5aac7b0ccd",
+      "dashboard/dist/style.css": "99ad2920e5759a6483860ac7640c68d5cef07482a0134f530d8d3bb0c23cf78f",
+      "dashboard/manifest.json": "d27249aeec2906d24ed4cb02044d2fbe5de91e4c2326487d2ce740288277d470",
+      "dashboard/plugin_api.py": "e9e724386c6f91becb2a17cdf8ec9fd992dd429ba4feef416a7bd81336c20e89",
+      "plugin.yaml": "d482e4b656c22a2f83ce1173d96f19d9d5dceacc9ee5981ac3fa2835d8434a1d"
+    },
+    "runtime_matches_standalone_archive": "75e2d4275ced10ba726762ee2c4bc923945970028de956fa36fc7f6a2e3898ec",
+    "standalone_installer_sha256": "c6339eafc9829172044a922f90ec2555f828b5cbee4bda498e8ce36aa550775d",
+    "excluded": [
+      "standalone installer",
+      "development tooling",
+      "build metadata",
+      "credentials/state",
+      "self-updater"
+    ]
+  },
+  "checks": {
+    "typescript_unit": 43,
+    "python_total": 15,
+    "python_real_hermes_config_writer_integration": 2,
+    "typecheck": "passed",
+    "lint_format": "passed",
+    "ruff": "passed",
+    "runtime_dependency_audit": "zero findings",
+    "native_admission_cli": {
+      "install_deps": true,
+      "disposable_source_runtime_home": true,
+      "checks": [
+        {
+          "name": "manifest",
+          "ok": true,
+          "detail": "plugin.yaml parses"
+        },
+        {
+          "name": "manifest fields",
+          "ok": true,
+          "detail": "name, version, description present"
+        },
+        {
+          "name": "requires_hermes",
+          "ok": true,
+          "detail": "spec '>=0.22.6,<0.22.7' parses"
+        },
+        {
+          "name": "config schema",
+          "ok": true,
+          "detail": "not declared"
+        },
+        {
+          "name": "requires_env",
+          "ok": true,
+          "detail": "all entries UPPER_SNAKE"
+        },
+        {
+          "name": "oauth",
+          "ok": true,
+          "detail": "not declared"
+        },
+        {
+          "name": "loadable",
+          "ok": true,
+          "detail": "entry: __init__.py"
+        },
+        {
+          "name": "python dependencies",
+          "ok": true,
+          "detail": "none declared"
+        },
+        {
+          "name": "capability probe",
+          "ok": true,
+          "detail": "register() ran in isolation"
+        },
+        {
+          "name": "declared tools",
+          "ok": true,
+          "detail": "matches registrations"
+        },
+        {
+          "name": "declared hooks",
+          "ok": true,
+          "detail": "matches registrations"
+        },
+        {
+          "name": "declared middleware",
+          "ok": true,
+          "detail": "matches registrations"
+        },
+        {
+          "name": "built-in tool collisions",
+          "ok": true,
+          "detail": "no tools to check"
+        },
+        {
+          "name": "security scan",
+          "ok": true,
+          "detail": "safe"
+        },
+        {
+          "name": "no core override",
+          "ok": true,
+          "detail": "no runtime rebinds of Hermes core"
+        }
+      ],
+      "warnings": [
+        "private core imports (catalog rule 9: public surfaces only; these can break on any release): dashboard/plugin_api.py:62 hermes_cli.web_server._get_pty_active_session_files; dashboard/plugin_api.py:63 hermes_cli.web_server_chat.PTY_REGISTRY; dashboard/plugin_api.py:62 hermes_cli.web_server.app. Use ctx.* / documented plugin APIs, or open an issue for the seam you need."
+      ],
+      "isolation_audit_is_not_runtime_compatibility_evidence": true
+    },
+    "native_install": {
+      "passed": true,
+      "transport": "native Git installer using local file URL with #catalog and exact fixture commit",
+      "payload_files_matched": 12,
+      "only_plugin_consent_changed": true,
+      "synthetic_history_preserved": true,
+      "dashboard_discovery": true,
+      "agents_started": 0,
+      "server_started": false
+    }
+  },
+  "browser_evidence": {
+    "record": "0.2.1.json",
+    "passed": 21,
+    "rerun_for_dropdown": true,
+    "reused_after_version_only_stamp": true,
+    "reason": "JS/CSS/Python API bytes match the full browser run; version metadata changed afterward."
+  },
+  "review_scope": "Prior packaging-tool review is recorded in catalog-0.2.0.json; no new independent/human certification is claimed for this UI release.",
+  "not_verified": [
+    "Model inference/streaming, model-driven tools/approvals/clarifications end to end",
+    "Sixteen active model sessions, sustained load or a 30-minute soak",
+    "Firefox/Safari or real mobile IME/clipboard",
+    "Named profiles/plugin-host runtime or other Hermes builds",
+    "Official catalog acceptance"
+  ]
+}

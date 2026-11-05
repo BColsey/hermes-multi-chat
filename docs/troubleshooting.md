@@ -33,7 +33,7 @@ Run as the profile owner. A symlinked config/plugin path requires deliberate man
 
 ## Checksum or archive validation failed
 
-Download the installer, archive and `.sha256` file from the **same v0.2.0 release**. A local checksum must sit beside its archive and name that exact filename. Do not disable verification or edit a checksum to fit an unexpected download.
+Download the installer, archive and `.sha256` file from the **same v0.2.1 release**. A local checksum must sit beside its archive and name that exact filename. Do not disable verification or edit a checksum to fit an unexpected download.
 
 GitHub may be unavailable or blocked; use the [offline installation path](installation.md#custom-paths-and-an-offline-bundle). Checksums validate integrity, not a separate publisher identity.
 

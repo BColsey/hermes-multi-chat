@@ -71,4 +71,4 @@ Search open and merged catalog PRs before submission. Keep the upstream PR data-
 
 Catalog updates require another SHA-bump PR and maintainer review, then Hermes's normal plugin update command. Never add an in-plugin downloader or replacement updater to this package. Keep standalone-installer management separate, preserve later configuration/history during removal, and plan an idle dashboard restart separately when an update replaces already-imported Python code.
 
-[Development checks](development.md) · [Compatibility](compatibility.md) · [Integration contracts](contracts.md) · [Aggregate packaging evidence](../verification/catalog-0.2.0.json)
+[Development checks](development.md) · [Compatibility](compatibility.md) · [Integration contracts](contracts.md) · [Aggregate packaging evidence](../verification/catalog-0.2.1.json)

@@ -4,7 +4,7 @@
 
 [![Checks](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml)
 [![Security](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml)
-[Download v0.2.0 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.0) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
+[Download v0.2.1 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.1) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
 
 Multi Chat adds an **adjustable 1–16-pane workspace** to the existing **Hermes Web Dashboard**. Each pane runs the real Hermes TUI in its own conversation and project. The normal Chat page stays exactly where it is.
 
@@ -16,7 +16,7 @@ Multi Chat adds an **adjustable 1–16-pane workspace** to the existing **Hermes
 
 ## Why Multi Chat?
 
-- **Separate projects, separate conversations.** Choose a workspace per pane or resume an existing chat without changing its workspace.
+- **Separate projects, separate conversations.** Choose a project from each pane’s dropdown, use **Other folder…** for a manual path, or resume a chat without changing its workspace.
 - **The real terminal experience.** Native TUI input, slash commands, tool output and approval UI—not a second chat implementation.
 - **A layout that stays out of your way.** Resize, maximize and restore; panes stack on narrow screens. Layout changes do not recreate terminals.
 - **Refresh without retyping.** Preserve selections and reuse retained terminals. Prompts are never automatically replayed.
@@ -39,13 +39,13 @@ Run these commands **on the machine that runs Hermes**, as the same OS user. Pyt
 
 ```bash
 curl --fail --location --output install.py \
-  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.2.0/install.py
+  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.2.1/install.py
 
 python3 install.py install          # verify compatibility + checksum; preview only
 python3 install.py install --apply  # install and enable after you review the plan
 ```
 
-Then open **Hermes → Plugins → Rescan dashboard extensions**, reload the page, and choose **Multi Chat**. Pick an absolute project directory in each pane and start a conversation. Wait for the pane's **connected** badge and the TUI's **ready** status before typing; an initial verification notice means input is not ready.
+Then open **Hermes → Plugins → Rescan dashboard extensions**, reload the page, and choose **Multi Chat**. Choose a project from each pane’s dropdown (or **Other folder…** for an absolute server path) and start a conversation. Wait for the pane's **connected** badge and the TUI's **ready** status before typing; an initial verification notice means input is not ready.
 
 The installer verifies the pinned release archive, changes only this plugin's consent, and never restarts a service or changes model/auth/tool settings. Downloading the installer is not the same as executing it: inspect it first if required by your security policy. Checksums detect corruption; they are not independent publisher signatures.
 
@@ -93,7 +93,7 @@ npm run typecheck && npm run lint && npm test
 npm run package
 ```
 
-See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.2.0.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
+See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.2.1.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
 
 ### Licensing
 

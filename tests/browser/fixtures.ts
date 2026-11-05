@@ -1,4 +1,9 @@
-import { test as base, expect, type APIRequestContext } from "@playwright/test";
+import {
+  test as base,
+  expect,
+  type APIRequestContext,
+  type Page,
+} from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 type AuthState = Awaited<ReturnType<APIRequestContext["storageState"]>>;
@@ -43,4 +48,12 @@ export const test = base.extend<
     await use(loginState);
   },
 });
+export async function chooseWorkspace(page: Page, pane: number, path: string) {
+  await page
+    .getByLabel(`Project for pane ${pane}`, { exact: true })
+    .selectOption("__custom__");
+  await page
+    .getByLabel(`Workspace for pane ${pane}`, { exact: true })
+    .fill(path);
+}
 export { expect };

@@ -23,4 +23,4 @@ Multi Chat adds independent terminal conversations to the **Hermes Web Dashboard
 - **[Third-party notices](third-party.md)** — bundled xterm packages and their licenses.
 - **[Security policy](../.github/SECURITY.md)** — report a sensitive problem privately.
 
-[Project README](../README.md) · [Preview release](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.0) · [Verification summary](../verification/0.2.0.json)
+[Project README](../README.md) · [Preview release](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.1) · [Verification summary](../verification/0.2.1.json)

@@ -21,7 +21,7 @@ Do not downgrade/patch a working Hermes installation just to bypass this guard. 
 
 ## What was verified
 
-The [v0.2.0 verification summary](../verification/0.2.0.json) records checks without private credentials, machine paths or transcripts. The real-dashboard suite was rerun for the adjustable-layout change.
+The [v0.2.1 verification summary](../verification/0.2.1.json) records checks without private credentials, machine paths or transcripts. The 21-test real-dashboard suite includes project dropdowns, keyboard/mobile layout, custom-folder fallback and project-list failure. It was reused after version-only stamping because JavaScript/CSS/Python API bytes were unchanged.
 
 All 1–16 empty layout counts and five simultaneous real TUI conversations were tested. Sixteen active model/tool sessions were not load-tested; the existing 16-PTY capacity remains shared with other views.
 

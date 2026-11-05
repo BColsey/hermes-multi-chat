@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { test, expect } from "./fixtures";
+import { test, expect, chooseWorkspace } from "./fixtures";
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "../..");
@@ -7,9 +7,7 @@ const workspace = (letter: string) => resolve(root, ".dev/project-" + letter);
 const pane = (page: Page, index: number) =>
   page.locator(`[data-pane="${index}"]`);
 async function start(page: Page, index: number, letter: string) {
-  await pane(page, index)
-    .getByLabel(`Workspace for pane ${index}`, { exact: true })
-    .fill(workspace(letter));
+  await chooseWorkspace(page, index, workspace(letter));
   await pane(page, index)
     .getByRole("button", { name: "Start new conversation", exact: true })
     .click();

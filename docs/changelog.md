@@ -2,6 +2,13 @@
 
 [Docs](index.md) / Changelog
 
+## 0.2.1 — project dropdowns
+
+- Replace workspace text-box suggestions with a per-pane project dropdown showing project names and server paths.
+- Keep **Other folder…** for manual paths, including when project discovery is unavailable; preserve saved selections, in-progress edits and resumed workspaces.
+- Keep the Python API, permissions, storage schema and native TUI execution unchanged.
+- Route trusted build/security/SBOM jobs to the isolated R720 worker, with fork/bot guards and no hosted-runner fallback.
+
 ## 0.2.0 — adjustable pane counts
 
 - Replace fixed two/four presets with a **1–16 visible-pane selector** and an automatic, resizable grid.

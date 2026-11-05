@@ -1,4 +1,4 @@
-import { test, expect } from "./fixtures";
+import { test, expect, chooseWorkspace } from "./fixtures";
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
@@ -88,11 +88,11 @@ test("legacy migration and five live panes preserve identity through count chang
   await count.selectOption("4");
   const ids: string[] = [];
   for (let n = 1; n <= 4; n++) {
-    await pane(page, n)
-      .getByLabel(`Workspace for pane ${n}`, { exact: true })
-      .fill(
-        resolve(import.meta.dirname, `../../.dev/project-${"abcd"[n - 1]}`),
-      );
+    await chooseWorkspace(
+      page,
+      n,
+      resolve(import.meta.dirname, `../../.dev/project-${"abcd"[n - 1]}`),
+    );
     await pane(page, n)
       .getByRole("button", { name: "Start new conversation", exact: true })
       .click();
@@ -125,9 +125,7 @@ test("legacy migration and five live panes preserve identity through count chang
   await count.selectOption("5");
   const fifth = resolve(import.meta.dirname, "../../.dev/project-e");
   await mkdir(fifth, { recursive: true });
-  await pane(page, 5)
-    .getByLabel("Workspace for pane 5", { exact: true })
-    .fill(fifth);
+  await chooseWorkspace(page, 5, fifth);
   await pane(page, 5)
     .getByRole("button", { name: "Start new conversation", exact: true })
     .click();

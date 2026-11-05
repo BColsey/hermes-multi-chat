@@ -3,7 +3,7 @@
   "label": "Multi Chat",
   "description": "Independent project conversations using the real Hermes TUI.",
   "icon": "MessageSquare",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "tab": {
     "path": "/multi-chat",
     "position": "after:chat"

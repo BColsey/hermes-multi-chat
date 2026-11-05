@@ -75,6 +75,7 @@ function ChatPane(props: PaneProps) {
   const [detail, setDetail] = React.useState("");
   const [error, setError] = React.useState("");
   const [resumeId, setResumeId] = React.useState("");
+  const [customWorkspace, setCustomWorkspace] = React.useState(false);
   const [retry, setRetry] = React.useState(0);
   const [opening, setOpening] = React.useState(false);
   const controls = React.useRef<TerminalControls | null>(null);
@@ -141,6 +142,8 @@ function ChatPane(props: PaneProps) {
     }
   for (const repo of props.workspaces?.repos ?? [])
     if (!options.has(repo.root)) options.set(repo.root, repo.label);
+  const useCustomWorkspace =
+    customWorkspace || (p.workspace !== "" && !options.has(p.workspace));
   return (
     <section
       className={`mc-pane ${props.focused ? "mc-focused" : ""}`}
@@ -191,8 +194,8 @@ function ChatPane(props: PaneProps) {
           </button>
         )}
       </header>
-      <div className="mc-workspace" title={p.workspace || "Choose a workspace"}>
-        {p.workspace || "No workspace selected"}
+      <div className="mc-workspace" title={p.workspace || "Choose a project"}>
+        {p.workspace || "No project selected"}
       </div>
       {active ? (
         <>
@@ -279,22 +282,48 @@ function ChatPane(props: PaneProps) {
           {!p.target && (
             <>
               <label>
-                Workspace for a new conversation
-                <input
-                  aria-label={`Workspace for pane ${props.index + 1}`}
-                  list={`mc-workspaces-${p.id}`}
-                  placeholder="/absolute/host/project/path"
-                  value={p.workspace}
-                  onChange={(e) => props.update({ workspace: e.target.value })}
-                />
-              </label>
-              <datalist id={`mc-workspaces-${p.id}`}>
-                {[...options].map(([path, label]) => (
-                  <option key={path} value={path}>
-                    {label}
+                Project for a new conversation
+                <select
+                  aria-label={`Project for pane ${props.index + 1}`}
+                  aria-busy={props.workspaces === null}
+                  title={p.workspace || "Choose a folder on your Hermes server"}
+                  value={useCustomWorkspace ? "__custom__" : p.workspace}
+                  onChange={(e) => {
+                    const custom = e.target.value === "__custom__";
+                    setCustomWorkspace(custom);
+                    if (!custom) props.update({ workspace: e.target.value });
+                  }}
+                >
+                  <option value="">
+                    {props.workspaces === null
+                      ? "Loading projects…"
+                      : options.size
+                        ? "Choose a project…"
+                        : "No projects found"}
                   </option>
-                ))}
-              </datalist>
+                  {[...options].map(([path, label]) => (
+                    <option key={path} value={path}>
+                      {label} — {path}
+                    </option>
+                  ))}
+                  <option value="__custom__">Other folder…</option>
+                </select>
+              </label>
+              {useCustomWorkspace && (
+                <label>
+                  Other folder on the server
+                  <input
+                    aria-label={`Workspace for pane ${props.index + 1}`}
+                    placeholder="/absolute/server/project/path"
+                    value={p.workspace}
+                    onFocus={() => setCustomWorkspace(true)}
+                    onChange={(e) => {
+                      setCustomWorkspace(true);
+                      props.update({ workspace: e.target.value });
+                    }}
+                  />
+                </label>
+              )}
               <p className="mc-start-warning">
                 Starting a terminal can evict an older detached view at the
                 dashboard’s 16-terminal cap. Account for its active work first;
@@ -318,7 +347,7 @@ function ChatPane(props: PaneProps) {
                     });
                   } catch {
                     setError(
-                      "Choose an absolute host workspace path first. Hermes will validate that it exists.",
+                      "Choose a project, or select Other folder… and enter an absolute server path. Hermes will validate that it exists.",
                     );
                   }
                 }}
@@ -491,10 +520,11 @@ export function MultiChat() {
         setWorkspaces(data);
       })
       .catch(() => {
-        if (!cancelled)
-          setNotice(
-            "Workspace discovery unavailable. Enter an absolute host path; the backend validates it.",
-          );
+        if (cancelled) return;
+        setWorkspaces({ projects: [], repos: [], default_cwd: "" });
+        setNotice(
+          "Project list unavailable. Select Other folder… to enter an absolute server path; it is validated by Hermes.",
+        );
       });
     refreshSessions();
     const persist = () => {

@@ -1,4 +1,4 @@
-import { test, expect } from "./fixtures";
+import { test, expect, chooseWorkspace } from "./fixtures";
 import { resolve } from "node:path";
 
 test("early input cannot lose its slash prefix and become a partial prompt", async ({
@@ -16,9 +16,11 @@ test("early input cannot lose its slash prefix and become a partial prompt", asy
   });
   await page.goto("/multi-chat");
   const pane = page.locator('[data-pane="1"]');
-  await pane
-    .getByLabel("Workspace for pane 1", { exact: true })
-    .fill(resolve(import.meta.dirname, "../../.dev/project-a"));
+  await chooseWorkspace(
+    page,
+    1,
+    resolve(import.meta.dirname, "../../.dev/project-a"),
+  );
   await pane
     .getByRole("button", { name: "Start new conversation", exact: true })
     .click();
