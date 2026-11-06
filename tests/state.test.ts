@@ -67,6 +67,23 @@ describe("per-pane state", () => {
     expect(parseLayout(JSON.stringify(l))).toEqual(l);
     expect(Object.keys(l.panes[0])).not.toContain("prompt");
   });
+  it("persists a projects directory without losing conversations when that optional preference is invalid", () => {
+    const layout = initialLayout();
+    layout.panes[0].target = newTarget("/tmp/working");
+    layout.projectsDirectory = "/tmp/projects";
+    expect(parseLayout(JSON.stringify(layout))).toEqual(layout);
+    for (const invalid of [
+      "relative",
+      "/bad" + String.fromCharCode(0) + "path",
+      42,
+    ]) {
+      const restored = parseLayout(
+        JSON.stringify({ ...layout, projectsDirectory: invalid }),
+      );
+      expect(restored.projectsDirectory).toBeUndefined();
+      expect(restored.panes).toEqual(layout.panes);
+    }
+  });
   it("fails closed on corrupted/colliding stored identities", () => {
     const l = initialLayout();
     l.panes[0].target = newTarget("/tmp/a");

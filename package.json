@@ -1,6 +1,6 @@
 {
   "name": "hermes-dashboard-multi-chat",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Independent real-TUI conversations in the Hermes Web Dashboard.",
   "repository": {

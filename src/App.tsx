@@ -1,4 +1,6 @@
 import { React, sdk, type SessionRow, type WorkspaceData } from "./sdk";
+import { ProjectDirectory } from "./ProjectDirectory";
+import type { DirectorySource } from "./directories";
 import {
   MAX_PANES,
   changePaneCount,
@@ -496,6 +498,24 @@ export function MultiChat() {
   const [workspaces, setWorkspaces] = React.useState<WorkspaceData | null>(
     null,
   );
+  const [directorySource, setDirectorySource] =
+    React.useState<DirectorySource | null>(
+      layout.projectsDirectory
+        ? { path: layout.projectsDirectory, folders: [], status: "loading" }
+        : null,
+    );
+  const availableWorkspaces: WorkspaceData | null = directorySource
+    ? directorySource.status === "loading"
+      ? null
+      : {
+          projects: [],
+          repos: directorySource.folders.map((folder) => ({
+            root: folder.path,
+            label: folder.name,
+          })),
+          default_cwd: "",
+        }
+    : workspaces;
   const [sessions, setSessions] = React.useState<SessionRow[]>([]);
   const [notice, setNotice] = React.useState("");
   const [storageWarning, setStorageWarning] = React.useState("");
@@ -523,7 +543,7 @@ export function MultiChat() {
         if (cancelled) return;
         setWorkspaces({ projects: [], repos: [], default_cwd: "" });
         setNotice(
-          "Project list unavailable. Select Other folder… to enter an absolute server path; it is validated by Hermes.",
+          "Hermes project discovery is unavailable. Choose a Projects directory above, or use Other folder… in a pane.",
         );
       });
     refreshSessions();
@@ -678,6 +698,21 @@ export function MultiChat() {
           )}
         </div>
       </div>
+      <ProjectDirectory
+        initialDirectory={layout.projectsDirectory}
+        home={workspaces?.home}
+        source={directorySource}
+        change={(source) => {
+          setDirectorySource(source);
+          if (source === null || source.status === "ready")
+            setLayout((previous) => {
+              const next = { ...previous };
+              if (source) next.projectsDirectory = source.path;
+              else delete next.projectsDirectory;
+              return next;
+            });
+        }}
+      />
       <details className="mc-help">
         <summary>Model selection, keyboard and lifecycle</summary>
         <p>
@@ -748,7 +783,7 @@ export function MultiChat() {
                 ? layout.maximized !== pane.id
                 : index >= layout.count
             }
-            workspaces={workspaces}
+            workspaces={availableWorkspaces}
             sessions={sessions}
             update={(patch) => update(pane.id, patch)}
             focus={() =>

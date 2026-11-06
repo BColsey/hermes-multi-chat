@@ -19,9 +19,11 @@ The installer and frontend reject unknown builds. This is deliberate: the read-o
 
 Do not downgrade/patch a working Hermes installation just to bypass this guard. Wait for a verified compatible plugin release, or perform an isolated compatibility assessment and its regression tests.
 
+Catalog listing is currently blocked by [maintainer-requested changes](https://github.com/NousResearch/hermes-agent/pull/149251): a public PTY-status API and feature-based compatibility with newer Hermes releases. This preview retains the tested exact-build guard; it does not claim v0.22.7 support or that a static 409 check establishes cross-version compatibility.
+
 ## What was verified
 
-The [v0.2.1 verification summary](../verification/0.2.1.json) records checks without private credentials, machine paths or transcripts. The 21-test real-dashboard suite includes project dropdowns, keyboard/mobile layout, custom-folder fallback and project-list failure. It was reused after version-only stamping because JavaScript/CSS/Python API bytes were unchanged.
+The [v0.2.2 verification summary](../verification/0.2.2.json) records checks without private credentials, machine paths or transcripts. The 27-test real-dashboard suite includes parent-directory browsing, saved choices, authentication/error cases, stale-response protection, unchanged live terminals and prior pane behavior. It was reused after version-only stamping because JavaScript/CSS/Python API bytes were unchanged.
 
 All 1–16 empty layout counts and five simultaneous real TUI conversations were tested. Sixteen active model/tool sessions were not load-tested; the existing 16-PTY capacity remains shared with other views.
 

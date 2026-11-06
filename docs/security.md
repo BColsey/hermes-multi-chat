@@ -35,10 +35,10 @@ Each release can carry these additional assets:
 - `multi-chat-<version>.cdx.json` — **CycloneDX JSON 1.5**.
 - `multi-chat-<version>.cdx.json.sha256` — its SHA-256 receipt.
 
-For the current preview, download them from [v0.2.1](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.1). Verify the downloaded JSON alongside its receipt:
+For the current preview, download them from [v0.2.2](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.2). Verify the downloaded JSON alongside its receipt:
 
 ```bash
-sha256sum --check multi-chat-0.2.1.cdx.json.sha256
+sha256sum --check multi-chat-0.2.2.cdx.json.sha256
 ```
 
 The SBOM identifies the project and its **bundled npm runtime dependencies**, with versions, package URLs, license IDs, dependency relationships and registry integrity hashes. Distribution references bind it to the **exact plugin archive and installer SHA-256 hashes**.
@@ -62,7 +62,7 @@ Only this release/manual workflow has release-write permission; it does not run 
 To backfill the current release from the default branch:
 
 ```bash
-gh workflow run sbom.yml --repo BColsey/hermes-multi-chat --ref main --field tag=v0.2.1
+gh workflow run sbom.yml --repo BColsey/hermes-multi-chat --ref main --field tag=v0.2.2
 ```
 
 Reruns verify identical existing metadata and upload only missing files. Different existing data fails for review rather than being overwritten. Original `SHA256SUMS`, archive, installer and tags remain unchanged. Future release tags must include the workflow to trigger automatically; older tags can use the manual path.
@@ -81,7 +81,7 @@ pip-audit --strict -r requirements-dev.txt -r requirements-security.txt
 
 npm run package
 npm run sbom
-(cd artifacts && sha256sum --check multi-chat-0.2.1.cdx.json.sha256)
+(cd artifacts && sha256sum --check multi-chat-0.2.2.cdx.json.sha256)
 ```
 
 The local command inventories the current checkout. Published metadata uses the exact release tag instead. Python environments without `ensurepip` should use an already available environment manager or the R720 workflow; do not install OS packages or modify a live Hermes environment just to run these checks.

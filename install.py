@@ -50,7 +50,7 @@ import tempfile
 import urllib.error
 import urllib.request
 
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 HERMES_VERSION = "0.22.6"
 HERMES_COMMIT = "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab"
 REPOSITORY = "BColsey/hermes-multi-chat"

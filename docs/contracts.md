@@ -29,6 +29,12 @@ Each pane owns random channel and attachment identifiers. Layout/focus only affe
 
 All WebSocket URLs, including reconnects, are obtained through the SDK's `buildWsUrl`. Passwords/cookies/tickets are neither read nor copied by the plugin. JSON calls use `fetchJSON` with explicit default-profile scope. The raw `/api/pty` protocol is forwarded unchanged, including binary output and `ESC[RESIZE:<cols>;<rows>]` controls. Only live human input is sent; there is no reconnect prompt queue or stored draft. The connected badge is published only after the socket and retained identity are verified. Live keystrokes await identity revalidation without treating unrelated session-list updates as a new attachment; they are sent only on the same live socket epoch and session. A disconnect or identity change discards pending input and requires explicit retyping. If human input arrives before identity verification, the view blocks the whole attempt instead of dropping a prefix and admitting its remaining bytes after verification; retry and retyping are explicit.
 
+## Project-directory selection
+
+The shared folder browser uses SDK `fetchJSON` for `GET /api/fs/list?profile=default&path=…`, the pinned host's existing authenticated directory-listing endpoint. It requests names/types/paths only, never file contents or filesystem writes, and preserves the host's managed-read boundary and sensitive-path filtering. Only entries marked as directories become project choices; no recursive scan or shell command is used.
+
+The optional `projectsDirectory` path is kept in schema-2 tab state, not Hermes configuration. Invalid optional preferences are discarded without losing pane identities. Directory requests have epochs: late results cannot replace a newer selection or reset. The path is saved only after successful listing. Changing the source list never changes a pane's selected workspace/target or terminal key.
+
 ## Why a read-only backend adapter exists
 
 In this build, the TUI does not consistently publish `session.info` at creation or after native `/new`/`/resume`. An explicit `resume` query also participates in the retained PTY's registry key, and canonicalization can follow compression descendants. Guessing the current ID from timing, terminal prose, shared preferences or a list of recent sessions is unsafe. Blindly reconnecting a lost attachment can spawn a new terminal.

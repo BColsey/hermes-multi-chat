@@ -106,11 +106,12 @@ Stop the disposable dashboard with Ctrl+C when finished. Inspect its child proce
 
 Disable traces/HAR/full-page log capture containing auth or sessions. Use only disposable public-demo directories and native non-sensitive TUI output for screenshots. Redact account usage/status, private paths and session metadata. Do not publish `.dev/`, login storage, error-context files, raw Playwright reports or full environment/config dumps.
 
-The committed [verification summary](../verification/0.2.1.json) is deliberately an aggregate, not a transcript or machine inventory. It separates a prior real-dashboard verification from the smaller GitHub CI suite.
+The committed [verification summary](../verification/0.2.2.json) is deliberately an aggregate, not a transcript or machine inventory. It separates a prior real-dashboard verification from the smaller GitHub CI suite.
 
 ## Source map
 
 - `src/App.tsx` — pane controls, selection and layout.
+- `src/ProjectDirectory.tsx`, `src/directories.ts` — authenticated parent-folder browsing, directory choices and stale-request/error handling.
 - `src/TerminalHost.tsx` — xterm lifetime, identity observation and input gates.
 - `src/ownership.ts` — atomic IndexedDB reservations and release/recovery.
 - `src/transport.ts` — SDK-authenticated sockets, raw protocol and socket epochs.

@@ -4,9 +4,17 @@
 
 Open **Multi Chat** at `/multi-chat` after [installation](installation.md). Normal Chat remains at `/chat`.
 
+## Choose a projects directory
+
+Expand **Projects directory** above the panes. Enter an absolute parent-folder path and click **Load projects**, or use **Browse from home**, **Folder to open → Open folder**, and **Up one level** to navigate the server's folders.
+
+Each pane's project dropdown then lists that directory's **immediate subfolders**. This includes ordinary folders, not just registered Hermes projects or Git repositories. It does not recursively scan, create/copy folders, register projects, read file contents or launch conversations. Hermes's existing authentication and file-access restrictions still apply; denied paths are not bypassed.
+
+The successfully selected parent directory is remembered in this tab's saved layout. **Use Hermes project list** restores the original discovery list. Loading another directory changes only the choices for new conversations: selected workspaces and running/resumed conversations are not changed or remounted. Empty/unreadable folders show a message; **Other folder…** remains available in each pane.
+
 ## Start or resume
 
-1. In an empty pane, choose a project from the **Project for a new conversation** dropdown. It lists non-archived Hermes project folders, discovered repositories and the dashboard starting directory, with names and absolute server paths. Choose **Other folder…** to enter a folder not listed. These are existing folders on your **Hermes server**, not new copies or sandboxes. Loading the list never overwrites your choice or manual input. `cwd` is sent explicitly for a new conversation and validated by Hermes.
+1. In an empty pane, choose a project from the **Project for a new conversation** dropdown. It lists the selected projects directory's child folders, or the default non-archived Hermes projects, discovered repositories and dashboard starting directory, with names and absolute server paths. Choose **Other folder…** to enter a folder not listed. These are existing folders on your **Hermes server**, not new copies or sandboxes. Loading the list never overwrites your choice or manual input. `cwd` is sent explicitly for a new conversation and validated by Hermes.
 2. Click **Start new conversation**. Wait for the pane's **connected** badge and the real TUI's **ready** status before typing. “Verifying terminal identity” means input is not ready; a resumed session can already have a prefilled ID/title before its actual attachment is verified. A verified socket is not necessarily a finished TUI bootstrap. If input arrives before verification, the view blocks the whole attempt instead of forwarding a partial draft; wait, click **Retry attachment**, and retype explicitly.
 3. For existing work, choose a conversation or enter its exact ID and click **Resume conversation**. Its original workspace is preserved; the new-project selection is not sent on resume.
 

@@ -9,6 +9,12 @@ type: howto
 
 Submit Multi Chat as a **community Web Dashboard plugin**, not a Desktop plugin or a Nous-maintained extension. Follow Hermes's [catalog submission guide](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins/catalog-submission); only its maintainers can approve a listing.
 
+## Current admission blocker
+
+[Maintainer review of PR #149251](https://github.com/NousResearch/hermes-agent/pull/149251) requested a public read-only dashboard PTY-status seam and feature-based compatibility instead of the exact version/commit guard and upper ceiling. Listing must wait on that public seam. v0.2.2 is a standalone experimental release; it keeps the tested restrictions and does **not** resolve those requests.
+
+Request the public seam upstream, then implement and verify the supported feature probes against the relevant Hermes builds before changing the guard/range and re-pinning the submission. Do not merely bump its SHA, suppress the private-import warning or remove safety checks to suggest approval. The existing review candidate remains v0.2.1 until that work is addressed.
+
 ## Build the reviewable package
 
 ```bash
@@ -71,4 +77,4 @@ Search open and merged catalog PRs before submission. Keep the upstream PR data-
 
 Catalog updates require another SHA-bump PR and maintainer review, then Hermes's normal plugin update command. Never add an in-plugin downloader or replacement updater to this package. Keep standalone-installer management separate, preserve later configuration/history during removal, and plan an idle dashboard restart separately when an update replaces already-imported Python code.
 
-[Development checks](development.md) · [Compatibility](compatibility.md) · [Integration contracts](contracts.md) · [Aggregate packaging evidence](../verification/catalog-0.2.1.json)
+[Development checks](development.md) · [Compatibility](compatibility.md) · [Integration contracts](contracts.md) · [Aggregate packaging evidence](../verification/catalog-0.2.2.json)

@@ -2,6 +2,11 @@
 
 [Docs](index.md) / Changelog
 
+## 0.2.2 — projects-directory browser
+
+- Add a shared **Projects directory** browser that populates all panes from a selected parent folder's immediate subdirectories, using Hermes's authenticated read-only filesystem API.
+- Remember the parent in this tab, preserve existing workspaces/terminals and ignore stale directory responses after navigation or reset. No Python/API/configuration change is required.
+
 ## 0.2.1 — project dropdowns
 
 - Replace workspace text-box suggestions with a per-pane project dropdown showing project names and server paths.

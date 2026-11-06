@@ -8,6 +8,7 @@ export interface WorkspaceData {
   }>;
   repos: Array<{ root: string; label: string }>;
   default_cwd: string;
+  home?: string;
 }
 export interface SessionRow {
   id: string;

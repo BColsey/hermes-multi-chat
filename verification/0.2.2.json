@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "plugin": {
+    "name": "multi-chat",
+    "version": "0.2.2",
+    "license": "MIT",
+    "status": "experimental preview"
+  },
+  "hermes": {
+    "version": "0.22.6",
+    "commit": "f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab",
+    "profile": "default",
+    "sdk": "1.1.0",
+    "isolation": "in_process"
+  },
+  "changes": [
+    "Shared Projects directory picker using authenticated native filesystem listing",
+    "Immediate child-folder choices in every pane, including ordinary non-Git folders",
+    "Saved parent, navigation/reset, stale-response protection and unchanged active workspaces/terminals",
+    "Unchanged Python API, native permissions, model defaults and shared PTY capacity"
+  ],
+  "checks": {
+    "typecheck": "passed",
+    "frontend_lint_format": "passed",
+    "python_lint_format": "passed",
+    "typescript_unit": {
+      "passed": 48
+    },
+    "python_unit": {
+      "passed": 13
+    },
+    "real_hermes_config_writer_integration": {
+      "passed": 2,
+      "scope": "temporary synthetic profiles only"
+    },
+    "real_hermes_browser": {
+      "passed": 27,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "rerun_for_dropdown": true,
+      "reused_after_version_only_stamp": true,
+      "reuse_reason": "JavaScript/CSS/Python API bytes match the full 27-test run; only release metadata changed afterward.",
+      "features": [
+        "All 1\u201316 empty layouts and five simultaneous real TUI conversations",
+        "Real parent-directory browsing, saved parent/choice, keyboard/mobile layout, missing/denied paths and anonymous access refusal",
+        "Stale navigation/reset responses ignored; root changes do not remount a running TUI or change its workspace",
+        "Original auth/ownership/lifecycle/reconnect/session-model and input-gating regressions"
+      ],
+      "model_inference": false
+    },
+    "browser_tested_asset_sha256": {
+      "dist/index.js": "fd24fa6f8cf27260da736e22007ad9b8ad2515a4689bc914c57f36a1f4ec916c",
+      "dist/style.css": "7660e294ba657b71aa5aba1cc5e18ebdc4619f022caba7ab1448eb2a7db8dcf2",
+      "plugin_api.py": "e9e724386c6f91becb2a17cdf8ec9fd992dd429ba4feef416a7bd81336c20e89"
+    },
+    "two_build_archive_reproducibility": "passed",
+    "catalog_payload_consistency": "passed",
+    "archive_members_and_runtime_bytes": "passed",
+    "runtime_npm_audit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "full_npm_audit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 7,
+      "high": 0,
+      "critical": 0,
+      "total": 7
+    },
+    "strict_python_development_security_audit": "passed; zero known vulnerabilities"
+  },
+  "ci_scope": {
+    "runner_selector": [
+      "self-hosted",
+      "linux",
+      "x64",
+      "r720-multi-chat"
+    ],
+    "workflows": [
+      "Checks",
+      "Security",
+      "Release SBOM"
+    ],
+    "does_not_run_real_hermes_browser_or_config_writer_integration": true,
+    "upstream_ci_controlled_by_maintainers": true
+  },
+  "artifact": {
+    "filename": "multi-chat-0.2.2.tar.gz",
+    "sha256": "17ed3bb90e6521edbf5d427cc159bde8017583eceaa883f2b24a4fdf4f857857",
+    "installer_sha256": "92bddd5b4ed022342158c240a284f28c2ee5bfc8498916e9e94bee9252c0c6db"
+  },
+  "prior_live_smoke": {
+    "version": "0.2.2",
+    "served_assets_match": true,
+    "actual_directory_source_independent_choices_refresh_navigation_reset_mobile_checked": true,
+    "pty_connections_created": 0,
+    "model_calls": 0,
+    "config_environment_login_unchanged": true,
+    "service_not_restarted": true,
+    "existing_dashboard_children_preserved": true,
+    "not_repeated_for_publication": true
+  },
+  "known_race": "Retention inspection and WebSocket upgrade are not atomic; a child exit can create an idle replacement without replaying prompts.",
+  "not_verified": [
+    "Model inference/streaming, model-driven tools/approvals/clarifications end to end",
+    "Sixteen active model sessions, sustained load or a 30-minute soak",
+    "Firefox/Safari or real mobile IME/clipboard",
+    "Named profiles/plugin-host runtime or other Hermes builds",
+    "Official catalog acceptance"
+  ],
+  "catalog_review": {
+    "state": "CHANGES_REQUESTED",
+    "url": "https://github.com/NousResearch/hermes-agent/pull/149251#pullrequestreview-5789481392",
+    "candidate_version": "0.2.1",
+    "candidate_sha": "378fd4c6955669acf26a821fc243272a5e02b5fd",
+    "requested": [
+      "Public read-only dashboard PTY-status seam; listing waits on it",
+      "Feature-based compatibility instead of exact version/commit and upper ceiling"
+    ],
+    "addressed_by_this_ui_release": false,
+    "candidate_not_repinned_to_imply_resolution": true
+  }
+}

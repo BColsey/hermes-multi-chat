@@ -1,3 +1,5 @@
+import { isDirectoryPath } from "./directories";
+
 export interface Target {
   channel: string;
   attach: string;
@@ -17,6 +19,7 @@ export interface Pane {
 export const MAX_PANES = 16;
 export interface Layout {
   version: 2;
+  projectsDirectory?: string;
   panes: Pane[];
   count: number;
   focused: string;
@@ -179,6 +182,9 @@ export function parseLayout(raw: string | null): Layout {
     const visible = new Set(value.panes.slice(0, value.count).map((p) => p.id));
     return {
       version: 2,
+      ...(isDirectoryPath(value.projectsDirectory)
+        ? { projectsDirectory: value.projectsDirectory }
+        : {}),
       panes: value.panes,
       count: value.count,
       focused: visible.has(value.focused) ? value.focused : value.panes[0].id,

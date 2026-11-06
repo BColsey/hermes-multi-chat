@@ -4,7 +4,7 @@
 
 [![Checks](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/ci.yml)
 [![Security](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml/badge.svg)](https://github.com/BColsey/hermes-multi-chat/actions/workflows/security.yml)
-[Download v0.2.1 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.1) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
+[Download v0.2.2 preview](https://github.com/BColsey/hermes-multi-chat/releases/tag/v0.2.2) · [Install](docs/installation.md) · [Docs](docs/index.md) · [Report a bug](https://github.com/BColsey/hermes-multi-chat/issues/new/choose)
 
 Multi Chat adds an **adjustable 1–16-pane workspace** to the existing **Hermes Web Dashboard**. Each pane runs the real Hermes TUI in its own conversation and project. The normal Chat page stays exactly where it is.
 
@@ -16,7 +16,7 @@ Multi Chat adds an **adjustable 1–16-pane workspace** to the existing **Hermes
 
 ## Why Multi Chat?
 
-- **Separate projects, separate conversations.** Choose a project from each pane’s dropdown, use **Other folder…** for a manual path, or resume a chat without changing its workspace.
+- **Separate projects, separate conversations.** Choose a parent **Projects directory** to populate all pane dropdowns from its subfolders, use **Other folder…** for a manual path, or resume a chat without changing its workspace.
 - **The real terminal experience.** Native TUI input, slash commands, tool output and approval UI—not a second chat implementation.
 - **A layout that stays out of your way.** Resize, maximize and restore; panes stack on narrow screens. Layout changes do not recreate terminals.
 - **Refresh without retyping.** Preserve selections and reuse retained terminals. Prompts are never automatically replayed.
@@ -29,9 +29,9 @@ The backend adapter runs **inside the dashboard process with its authority**, no
 
 Starting/resuming a pane explicitly asks Hermes to launch/attach a **real TUI process and agent session**. Native tools, shell execution, provider network calls and approvals remain Hermes's responsibility under your existing settings. Hidden panes continue working. The plugin adds no executor, automatic approval, resource-limit increase, telemetry, runtime CDN or independent external service.
 
-The plugin uses SDK-managed, authenticated same-origin APIs, including existing session/project metadata. It does not read credential stores such as `.env`, `auth.json`, browser passwords or another tool's login. Browser sessionStorage holds layouts/workspaces/selections; IndexedDB/localStorage hold session/attachment ownership identifiers and release proofs—not transcripts, stored prompts or credentials. The adapter reads only core identity markers and returns retention/session/attachment metadata through an authenticated route.
+The plugin uses SDK-managed, authenticated same-origin APIs, including existing session/project metadata and, for explicit directory browsing, the host's read-only filesystem listing. Directory browsing follows native file-access restrictions and does not read file contents or create/register projects. It does not read credential stores such as `.env`, `auth.json`, browser passwords or another tool's login. Browser sessionStorage holds layouts/workspaces/selections; IndexedDB/localStorage hold session/attachment ownership identifiers and release proofs—not transcripts, stored prompts or credentials. The adapter reads only core identity markers and returns retention/session/attachment metadata through an authenticated route.
 
-The [catalog distribution and complete disclosures](catalog/README.md) omit the standalone installer and development tooling. It has no self-updater or agent capabilities; future catalog updates require a reviewed SHA-bump PR. Catalog packaging is not catalog approval. See the [review procedure](docs/catalog.md).
+The [catalog distribution and complete disclosures](catalog/README.md) omit the standalone installer and development tooling. It has no self-updater or agent capabilities; future catalog updates require a reviewed SHA-bump PR. Catalog packaging is not catalog approval. [Maintainer review](https://github.com/NousResearch/hermes-agent/pull/149251) requires a public PTY-status seam and feature-based compatibility before listing; this release does not resolve those requests. See the [review procedure](docs/catalog.md).
 
 ## Install in a few minutes
 
@@ -39,7 +39,7 @@ Run these commands **on the machine that runs Hermes**, as the same OS user. Pyt
 
 ```bash
 curl --fail --location --output install.py \
-  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.2.1/install.py
+  https://github.com/BColsey/hermes-multi-chat/releases/download/v0.2.2/install.py
 
 python3 install.py install          # verify compatibility + checksum; preview only
 python3 install.py install --apply  # install and enable after you review the plan
@@ -93,7 +93,7 @@ npm run typecheck && npm run lint && npm test
 npm run package
 ```
 
-See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.2.1.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
+See [development](docs/development.md) for Python checks, isolated real-dashboard browser tests, release packaging and contribution guidance. [Verification summary](verification/0.2.2.json) · [security scans and SBOMs](docs/security.md) · [third-party notices](docs/third-party.md) · [security policy](.github/SECURITY.md)
 
 ### Licensing
 
